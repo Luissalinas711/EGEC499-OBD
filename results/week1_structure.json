@@ -1,0 +1,48 @@
+{
+  "file size (MB)": 5.3,
+  "rows, columns": [
+    55999,
+    15
+  ],
+  "missing values": 0,
+  "duplicate rows": 1,
+  "class counts": [
+    16000,
+    10998,
+    15000,
+    14001
+  ],
+  "lowest rpm": 1066.5,
+  "lowest speed": 22.8,
+  "map min and max": [
+    0.45,
+    4.55
+  ],
+  "tps min and max": [
+    0.38,
+    4.05
+  ],
+  "label changes": 3,
+  "block starts": [
+    0,
+    16000,
+    26998,
+    41998
+  ],
+  "rpm lag-1 per block": [
+    0.9965,
+    0.9962,
+    0.9953,
+    0.9956
+  ],
+  "map lag-1 per block": [
+    0.9968,
+    0.9957,
+    0.9941,
+    0.9945
+  ],
+  "rpm independent rows": 116,
+  "random split accuracy": 0.747,
+  "block split accuracy": 0.599,
+  "block split macro F1": 0.623
+}
