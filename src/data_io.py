@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 
-from . import config
+from src import config
 
 
 def load(path=None):
