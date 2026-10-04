@@ -3,7 +3,7 @@
 
 from pathlib import Path
 
-# config.py sits in src/, so the repo folder is one level up
+# config.py sits in src/, so the repo folder is just one level up
 REPO = Path(__file__).resolve().parents[1]
 CSV = REPO / "data" / "raw" / "EngineFaultDB_Final.csv"
 RESULTS = REPO / "results"
