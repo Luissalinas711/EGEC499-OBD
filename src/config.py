@@ -33,3 +33,6 @@ FEATURES = [name for name in COLUMN_NAMES.values() if name != LABEL]
 
 # MAP and TPS are documented in kPa and percent, but their ranges look like volts.
 UNITS_IN_QUESTION = ["map", "tps"]
+
+# Vergara et al.: Table 4 and Section II-B
+FAULT_NAMES = {0: "no fault", 1: "rich mixture", 2: "lean mixture", 3: "low voltage"}
