@@ -8,6 +8,11 @@
 import numpy as np
 from src.data_io import class_runs
 
+def purge_width(lag1_csv):
+    # Rows for the slowest week 1 column to lose half its lag-1 correlation, rounded up to the next 100
+    slowest = pd.read_csv(lag1_csv)["lag1"].max()
+    return int(np.ceil(np.log(0.5) / np.log(slowest) / 100) * 100)
+    
 class BlockedSplit:
     def __init__(self, k=5, purge=0):
         self.k = k
