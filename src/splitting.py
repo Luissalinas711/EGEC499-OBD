@@ -5,7 +5,9 @@
 # every test piece is one continuous stretch of the recording
 # the rows just before and after a test piece (near copies) are dropped from training. That dropped band is the purge.
 
+from src.data_io import class_runs
 import numpy as np
+import pandas as pd
 from src.data_io import class_runs
 
 def purge_width(lag1_csv):
