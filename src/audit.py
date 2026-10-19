@@ -1,12 +1,11 @@
 # AVAILABILITY AUDIT
-# What a car could actually supply for each of the 14 columns, so every later script uses the same feature sets. 
+# What a car could actually supply for each of the 14 columns, so every later script uses the same feature sets.
 # The tiers:
 #   port           a standard OBD-II PID reports the same quantity
 #   substitutable  a car can supply it, but only some cars, from a different instrument, or by calculation
 #   laboratory     needs the dynamometer or the gas analyser; no car reports it
-
-# These are my judgements, not measurements. 
-# Nothing in the dataset confirms them, so the reasons are one line each here. the full argument will be carried out later
+# These are my judgements, not measurements
+# Nothing in the dataset confirms them, so the reasons are one line each here. The full argument will be carried out later.
 
 AUDIT = {
     # column       tier              where a car could get it
@@ -18,8 +17,6 @@ AUDIT = {
     "cons_l100km": ("substitutable", "calculated from fuel rate and speed"),
     "lambda_":     ("substitutable", "wideband PIDs 0x24 to 0x2B, 0x34 to 0x3B, some cars"),
     "afr":         ("substitutable", "lambda times a constant, so it follows lambda"),
-    # Moved out of an "undecided" tier on 9 October:
-    # this column is exhaust oxygen from the gas analyser, which no port reports, and the nearest thing a car does report is lambda from the wideband sensor (already its own column above)
     "o2":          ("laboratory",    "gas analyser only; a car reports lambda instead"),
     "co":          ("laboratory",    "gas analyser only"),
     "hc":          ("laboratory",    "gas analyser only"),
@@ -29,8 +26,9 @@ AUDIT = {
 }
 
 # RESTRICTION LADDER
-# Each rung removes one instrument or one assumption, and every rung sits inside the one before it, so any drop in score between two rungs has a single named cause. 
-# The name of each rung says what was taken away to get there
+# Each rung removes one instrument or one assumption, and every rung sits inside the one before it
+# any drop in score between two rungs has a single named cause
+# The name of each rung says what was taken away to get there.
 
 RUNGS = {
     "all 14 (laboratory)": ["rpm", "speed", "map", "tps", "cons_lph", "cons_l100km",
@@ -43,13 +41,23 @@ RUNGS = {
     "dedicated PIDs only": ["rpm", "speed", "map", "tps"],
 }
 
-# Two things that would quietly invalidate the ladder if they were ever false, so they are  checked here:
-# 1. A misspelled column would surface as a pandas error during the run (which can take several minutes or longer)
-# 2. a rung that is not nested inside the one above it would give a drop in score (potentially with more than one possible cause)
+# Four things that would invalidate the ladder if they were ever false, so they are checked here on import:
+# 1. A misspelled column would surface as a pandas error during the run
+# 2. A rung that is not nested inside the one above it would give a drop in score with more than one possible cause.
+# 3. The widest rung has to be every column in the audit, or "all 14" is not all 14.
+# 4. The narrowest rung has to be exactly the port tier, or a tier can be changed here without the ladder following it.
 
-_names = list(RUNGS)
+_rungs = list(RUNGS)
+_port = {column for column, (tier, _) in AUDIT.items() if tier == "port"}
+
 for _rung, _columns in RUNGS.items():
     assert not set(_columns) - set(AUDIT), \
         f"{_rung} names a column that is not in AUDIT: {set(_columns) - set(AUDIT)}"
-for _bigger, _smaller in zip(_names, _names[1:]):
+
+for _bigger, _smaller in zip(_rungs, _rungs[1:]):
     assert set(RUNGS[_smaller]) < set(RUNGS[_bigger]), f"{_smaller} is not inside {_bigger}"
+
+assert set(RUNGS[_rungs[0]]) == set(AUDIT), \
+    f"the widest rung is not every audited column: {set(AUDIT) - set(RUNGS[_rungs[0]])}"
+assert set(RUNGS[_rungs[-1]]) == _port, \
+    f"the narrowest rung is not exactly the port columns: {_port ^ set(RUNGS[_rungs[-1]])}"
