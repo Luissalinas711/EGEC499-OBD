@@ -1,15 +1,18 @@
 # Paths and column names
-# Every other script will import this one
+# Every other script imports this one. 
+# It only declares things: the startup cell mounts Drive and creates the folders before any script runs.
 
 from pathlib import Path
 
 # config.py sits in src/, so the repo folder is just one level up
 REPO = Path(__file__).resolve().parents[1]
 CSV = REPO / "data" / "raw" / "EngineFaultDB_Final.csv"
-RESULTS = REPO / "results"
-FIGURES = REPO / "figures"
 
-# This maps the header text (lower case) to the name I use in code.
+DRIVE = Path("/content/drive/MyDrive/EGEC499-OBD")
+RESULTS = DRIVE / "results"
+FIGURES = DRIVE / "figures"
+
+# This maps the header text (lower case) to the name I use in code
 COLUMN_NAMES = {
     "fault": "fault",
     "map": "map",
@@ -29,10 +32,9 @@ COLUMN_NAMES = {
 }
 
 LABEL = "fault"
-FEATURES = [name for name in COLUMN_NAMES.values() if name != LABEL]
 
-# MAP and TPS are documented in kPa and percent, but their ranges look like volts.
-UNITS_IN_QUESTION = ["map", "tps"]
+# Read off the map above rather than listed again
+FEATURES = [name for name in COLUMN_NAMES.values() if name != LABEL]
 
 # Vergara et al.: Table 4 and Section II-B
 FAULT_NAMES = {0: "no fault", 1: "rich mixture", 2: "lean mixture", 3: "low voltage"}
