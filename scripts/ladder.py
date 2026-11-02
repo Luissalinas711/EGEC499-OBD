@@ -45,7 +45,6 @@ recall_columns = [f"recall: {names[label]}" for label in sorted(names)]
 # so this shows what the ladder does to the separable part
 def merge_pair(labels):
     return np.where(labels == 3, 2, labels)
-
 rows = []
 for model_name, model in models.items():
     for rung_name, rung_columns in RUNGS.items():
@@ -78,4 +77,4 @@ for model_name, model in models.items():
 
 print()
 save_result(pd.DataFrame(rows), "ladder.csv")
-print("now run ladder_report.py")
+print("now run report.py")
