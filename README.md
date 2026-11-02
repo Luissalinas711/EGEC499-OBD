@@ -33,8 +33,9 @@ Three folders, split by how each file is used.
 | `scripts/label_map.py` | script | confirms which numeric label is which fault |
 | `scripts/folds.py` | script | checks the splitter, measures operating-point drift |
 | `scripts/ladder.py` | script | the restriction ladder, two models, three split designs |
-| `scripts/ladder_report.py` | script | reads `ladder.csv`, writes the tables and the figure |
 | `scripts/diagnostics.py` | script | four checks on the port-only rung |
+| `scripts/segments.py` | script | the segments inside each block, and what each one holds |
+| `scripts/report.py` | script | rebuilds every table and figure from the committed results |
 | `colab/startup_cell.py` | cell | mounts Drive, sets up git, clones the repo, fetches the data |
 | `colab/finish_cell.py` | cell | copies results into the repo, commits and pushes |
 
@@ -52,8 +53,12 @@ Run `colab/startup_cell.py` as the first cell of the session, then each script b
 | 2 | `scripts/label_map.py` | `label_evidence.csv`, `label_evidence.png` | the CSV |
 | 3 | `scripts/folds.py` | `fold_drift.csv` | step 1 |
 | 4 | `scripts/ladder.py` | `ladder.csv` | step 1 |
-| 5 | `scripts/ladder_report.py` | `ladder.png` | step 4 |
-| 6 | `scripts/diagnostics.py` | `port_rung_folds.csv`, `matched_separation.csv`, `within_recording_drift.csv` | step 1 |
+| 5 | `scripts/diagnostics.py` | `port_rung_folds.csv`, `port_confusion.csv`, `port_importance.csv`, `port_subsets.csv`, `matched_separation.csv`, `within_recording_drift.csv` | step 1 |
+| 6 | `scripts/segments.py` | `segment_edges.csv`, `segment_points.csv`, `segment_distance.csv`, `segment_settling.csv`, `segment_lag1.csv` | the CSV |
+| 7 | `scripts/report.py` | every table, and all four figures | steps 1 to 6 |
+
+The producing scripts save and check; none of them print a table or draw a figure.
+`report.py` does all of that, from the committed results, and deletes the figures folder first so a leftover file cannot be mistaken for a current one.
 
 Steps 2, 3 and 6 are quick to run. Step 4 is the only slow one, which is why the ladder writes a CSV.
 Reporting is a separate script so that the figure and the tables can be changed and re-run.
@@ -83,13 +88,16 @@ A file's own timestamp is reset by a clone, a copy or a Drive sync, so it cannot
 
 ## Methods
 
-The file is a time recording, not a shuffled sample. 
-Consecutive rows are the same engine a fraction of a second apart, 
-so a standard shuffled split puts near-copies of one instant on both sides and tests the model on records it has effectively already seen.
+The file is ordered, not a shuffled sample.
+Each class block is built from 1000-row segments, 57 in all, and each segment holds one operating point,
+so rows inside a segment share both a fault and an operating condition.
+A standard shuffled split puts rows from the same condition on both sides and tests the model on conditions it has already seen.
 
 `BlockedSplit` cuts each class block into five contiguous pieces and tests piece *k* of every block in fold *k*, 
-so each fold holds all four classes and every test region is one continuous span of time. 
-Rows beside a test piece are dropped from training; the width of that purge band is the half-life of the slowest column's lag-1 correlation, 500 rows.
+so each fold holds all four classes and every test region is one continuous span of the file. 
+Rows beside a test piece are dropped from training; the width of that purge band is the half-life of the slowest column's block-level lag-1 correlation, 500 rows.
+That correlation is produced by the steps between segments rather than by row-to-row smoothness, as `segment_lag1.csv` shows,
+so what the band mainly removes is training rows that share a segment with the test piece.
 Four properties are asserted before any score is used.
 
 `audit.py` checks four things on import: 
@@ -101,15 +109,23 @@ Results are reported as the range across the five folds, not as a single number.
 
 ## Findings so far
 
-As of 19 October 2026.
+As of 1 November 2026.
 
 - **Leakage is worth 0.42 macro F1** at the full fourteen columns: 0.755 under a shuffled split against 0.334 under a blocked split with the purge band.
   Almost all of the gap comes from breaking the block structure rather than from rows adjacent to the test piece.
 - **Restriction to the four dedicated OBD-II PIDs costs almost nothing**
   , 0.334 to 0.321, but the fold range at that rung covers random guessing, so no fault signal is established there.
-- **The fault label and the recording session cannot be separated.**
-  The four labels sit in four contiguous blocks, and the paper describes each fault being induced and then recorded, so on that reading the label and the session are the same variable.
-  On engine speed, every one of the four blocks separates its own two halves better, 0.665 to 0.800, than any two faults separate, 0.610.
+- **Each block is built from 1000-row segments**, 57 in all, each holding one operating point.
+  The paper describes acquisition by design of experiments and a response surface technique, which is what those segments are.
+- **Fault is confounded with the set of operating points used.**
+  The four faults were recorded at different operating points, except lean mixture and low voltage, whose segment means coincide at 0.01 against 0.41 to 0.66 for every other pair.
+  Those two are the pair the models cannot tell apart: 44% of true low voltage is predicted as lean mixture and 24% as itself.
+- **The block-level lag-1 correlations near 0.998 are the segment structure, not row-to-row smoothness.**
+  Measured inside a single segment the same figure is 0.008 for engine speed and near zero for most columns; MAP at 0.62 is the exception.
 - **MAP and TPS are recorded in volts**, not the kPa and percent the paper states; its own Table 5 gives ranges of 0.45 to 4.55 and 0.38 to 4.05.
+
+Still open: whether consecutive segments are separate acquisitions or steps within one continuous run.
+The paper states that measurements were taken once the sensors were in the appropriate state and that inconsistent readings were screened out,
+so no settling transient survives in the file either way, and `segment_settling.csv` shows none beyond the first row of a segment.
 
 
