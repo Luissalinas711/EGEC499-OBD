@@ -1,5 +1,5 @@
 # RESTRICTION LADDER
-# Writes ladder.csv and prints nothing but progress. Read it with ladder_report.py.
+# Writes ladder.csv and ladder_folds.csv, and prints nothing but progress. Read both with report.py.
 
 import numpy as np
 import pandas as pd
@@ -33,9 +33,11 @@ checks = check_split(y, blocked)
 print(f"purge band {purge} rows, splitter {sum(checks.values())}/{len(checks)} checks pass")
 assert all(checks.values()), "run folds.py to see which check failed"
 
+# max_features is written out rather than left to the sklearn default, 
+# "sqrt" is the square root of the rungs own width, so a split sees 3 of 14 columns at the widest rung and 2 of 4 at the narrowest
 # The scaler sits inside the pipeline, so it only ever learns from the training fold
 models = {"random forest": RandomForestClassifier(n_estimators=100, random_state=0,
-                                                  n_jobs=-1),
+                                                  n_jobs=-1, max_features="sqrt"),
           "logistic regression": make_pipeline(StandardScaler(),
                                                LogisticRegression(max_iter=1000))}
 recall_columns = [f"recall: {names[label]}" for label in sorted(names)]
@@ -46,15 +48,20 @@ recall_columns = [f"recall: {names[label]}" for label in sorted(names)]
 def merge_pair(labels):
     return np.where(labels == 3, 2, labels)
 rows = []
+fold_rows = []                               # one row per model, rung and fold
 for model_name, model in models.items():
     for rung_name, rung_columns in RUNGS.items():
         X = df[rung_columns].to_numpy()
         predicted = np.zeros_like(y)             # every row gets predicted once
         fold_f1 = []
-        for train, test in blocked.split(X, y):
+        for fold, (train, test) in enumerate(blocked.split(X, y), start=1):
             model.fit(X[train], y[train])
             predicted[test] = model.predict(X[test])
             fold_f1.append(f1_score(y[test], predicted[test], average="macro"))
+            # Kept per fold, not just as a mean:
+            # two rungs can only be compared against each other on the same fold, and the mean disregards that
+            fold_rows.append({"model": model_name, "rung": rung_name,
+                              "fold": fold, "macro_f1": fold_f1[-1]})
         macro_f1 = np.mean(fold_f1)
 
         # The controls need a mean only, so cross_val_score is enough for them
@@ -77,4 +84,5 @@ for model_name, model in models.items():
 
 print()
 save_result(pd.DataFrame(rows), "ladder.csv")
+save_result(pd.DataFrame(fold_rows), "ladder_folds.csv")
 print("now run report.py")
