@@ -1,0 +1,51 @@
+model,rung,fold,macro_f1,run_at
+random forest,all 14 (laboratory),1,0.12688629637782178,02 Nov 19:44
+random forest,all 14 (laboratory),2,0.3127265649324161,02 Nov 19:44
+random forest,all 14 (laboratory),3,0.3693530297999119,02 Nov 19:44
+random forest,all 14 (laboratory),4,0.27862207397319666,02 Nov 19:44
+random forest,all 14 (laboratory),5,0.5826631831641633,02 Nov 19:44
+random forest,no dynamometer,1,0.15102515966652036,02 Nov 19:44
+random forest,no dynamometer,2,0.3060880908941207,02 Nov 19:44
+random forest,no dynamometer,3,0.2637423576493464,02 Nov 19:44
+random forest,no dynamometer,4,0.2881392137595136,02 Nov 19:44
+random forest,no dynamometer,5,0.4990958965269225,02 Nov 19:44
+random forest,no analyser gases,1,0.20532662055807527,02 Nov 19:44
+random forest,no analyser gases,2,0.30361410581515225,02 Nov 19:44
+random forest,no analyser gases,3,0.2003425702952354,02 Nov 19:44
+random forest,no analyser gases,4,0.2615055671008697,02 Nov 19:44
+random forest,no analyser gases,5,0.49733259319368267,02 Nov 19:44
+random forest,no wideband lambda,1,0.21602379221374002,02 Nov 19:44
+random forest,no wideband lambda,2,0.33855694639450296,02 Nov 19:44
+random forest,no wideband lambda,3,0.1602841281893994,02 Nov 19:44
+random forest,no wideband lambda,4,0.2583440871664727,02 Nov 19:44
+random forest,no wideband lambda,5,0.43737121649291166,02 Nov 19:44
+random forest,dedicated PIDs only,1,0.2666729923486066,02 Nov 19:44
+random forest,dedicated PIDs only,2,0.43492206024181695,02 Nov 19:44
+random forest,dedicated PIDs only,3,0.30371014304170024,02 Nov 19:44
+random forest,dedicated PIDs only,4,0.18777674977393818,02 Nov 19:44
+random forest,dedicated PIDs only,5,0.41379441987737453,02 Nov 19:44
+logistic regression,all 14 (laboratory),1,0.33164829589957423,02 Nov 19:44
+logistic regression,all 14 (laboratory),2,0.25948518102240503,02 Nov 19:44
+logistic regression,all 14 (laboratory),3,0.30934623977560394,02 Nov 19:44
+logistic regression,all 14 (laboratory),4,0.4295348153345441,02 Nov 19:44
+logistic regression,all 14 (laboratory),5,0.4395562420085996,02 Nov 19:44
+logistic regression,no dynamometer,1,0.40209294274850194,02 Nov 19:44
+logistic regression,no dynamometer,2,0.2371960724555161,02 Nov 19:44
+logistic regression,no dynamometer,3,0.30519638639313046,02 Nov 19:44
+logistic regression,no dynamometer,4,0.3534122080346259,02 Nov 19:44
+logistic regression,no dynamometer,5,0.4745326081978517,02 Nov 19:44
+logistic regression,no analyser gases,1,0.346989672828244,02 Nov 19:44
+logistic regression,no analyser gases,2,0.15413712710611302,02 Nov 19:44
+logistic regression,no analyser gases,3,0.1775462793207314,02 Nov 19:44
+logistic regression,no analyser gases,4,0.1461033775779007,02 Nov 19:44
+logistic regression,no analyser gases,5,0.2674120268236711,02 Nov 19:44
+logistic regression,no wideband lambda,1,0.20120868100783706,02 Nov 19:44
+logistic regression,no wideband lambda,2,0.18879941591754112,02 Nov 19:44
+logistic regression,no wideband lambda,3,0.08187603561834196,02 Nov 19:44
+logistic regression,no wideband lambda,4,0.18365724083734275,02 Nov 19:44
+logistic regression,no wideband lambda,5,0.22528775023256445,02 Nov 19:44
+logistic regression,dedicated PIDs only,1,0.07532574305372994,02 Nov 19:44
+logistic regression,dedicated PIDs only,2,0.14840737286764072,02 Nov 19:44
+logistic regression,dedicated PIDs only,3,0.1763372557167369,02 Nov 19:44
+logistic regression,dedicated PIDs only,4,0.1596349146935786,02 Nov 19:44
+logistic regression,dedicated PIDs only,5,0.15575097274656846,02 Nov 19:44
