@@ -4,6 +4,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy.stats import ttest_rel
 from src import config
 from src.data_io import class_runs, load, load_result
 
@@ -89,6 +90,26 @@ print(ladder[["model", "rung"] + recall_columns + ["three_class_f1"]]
 SHORT = {"all 14 (laboratory)": "all 14", "no dynamometer": "no dyno",
          "no analyser gases": "no gases", "no wideband lambda": "no lambda",
          "dedicated PIDs only": "PIDs only"}
+
+# IS EACH STEP DOWN THE LADDER BIGGER THAN THE SPREAD ACROSS FOLDS?
+# Two rungs are compared on the same five folds, so whatever makes a fold hard for one makes it hard for the other 
+# Comparing the rung means alone cannot do that.
+# Each step is compared, then the whole ladder from the widest rung to the narrowest.
+scores = load_result("ladder_folds.csv").pivot_table(index=["model", "rung"],
+                                                     columns="fold", values="macro_f1")
+steps = list(zip(rungs, rungs[1:])) + [(rungs[0], rungs[-1])]
+comparisons = []
+for model_name in ladder["model"].unique():
+    for wider, narrower in steps:
+        a = scores.loc[(model_name, wider)].to_numpy()
+        b = scores.loc[(model_name, narrower)].to_numpy()
+        comparisons.append({"model": model_name, "step": f"{SHORT[wider]} to {SHORT[narrower]}",
+                            "mean drop": (a - b).mean(), "folds dropping": int((a > b).sum()),
+                            "p": ttest_rel(a, b)[1]})
+print("\ndoes the score drop from one rung to the next, fold by fold?")
+print("five folds only, so p is blunt and 0.05 is a floor rather than a verdict")
+print(pd.DataFrame(comparisons).round(3).to_string(index=False))
+
 positions = np.arange(len(rungs))
 plt.figure(figsize=(7, 4))
 for shift, (model_name, part) in zip([-0.05, 0.05], ladder.groupby("model", sort=False)):
@@ -131,7 +152,7 @@ print(f"\nclass separability at {bands} bands per axis, "
       f"0.50 is indistinguishable and 1.00 is perfect")
 print(separation.round(3).to_string())
 
-# Row 0 is the whole dataset; the rest are the cells that qualified.
+# Row 0 is the whole dataset; the rest are the cells that qualified
 unmatched, cells = separation.iloc[0], separation.iloc[1:]
 if len(cells):
     print(f"\n{len(cells)} of {bands * bands} cells qualify")
