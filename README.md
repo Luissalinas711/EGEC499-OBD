@@ -127,5 +127,3 @@ As of 1 November 2026.
 Still open: whether consecutive segments are separate acquisitions or steps within one continuous run.
 The paper states that measurements were taken once the sensors were in the appropriate state and that inconsistent readings were screened out,
 so no settling transient survives in the file either way, and `segment_settling.csv` shows none beyond the first row of a segment.
-
-
