@@ -49,32 +49,29 @@ for model_name, model in [("random forest", forest), ("logistic regression", log
     matrices[model_name] = pooled
 
 shares = pd.DataFrame(share_rows, columns=["model", "fold"] + CLASS_NAMES)
-print("\nshare of predictions given to each class, fold by fold")
-print(shares.round(2).to_string(index=False))
 save_result(shares, "port_rung_folds.csv")
 
+confusion_rows = []
 for model_name, pooled in matrices.items():
     counted = confusion_matrix(y, pooled)
-    by_row = pd.DataFrame(counted / counted.sum(axis=1, keepdims=True),
-                          index=[f"true {n}" for n in CLASS_NAMES],
-                          columns=[f"pred {n}" for n in CLASS_NAMES])
-    print(f"\n{model_name}: of everything that really was each class, where it went")
-    print(by_row.round(2).to_string())
+    share_of_row = counted / counted.sum(axis=1, keepdims=True)
+    for true_name, row in zip(CLASS_NAMES, share_of_row):
+        confusion_rows.append({"model": model_name, "true": true_name,
+                               **dict(zip(CLASS_NAMES, row))})
+
+save_result(pd.DataFrame(confusion_rows), "port_confusion.csv")
 
 # 2. WHAT THE FOREST IS LEANING ON
-# Importances are refitted here so the section stands alone.
-# Min to max says whether the forest leans on the same column every fold.
-# For the split below: Vergara et al. put RPM against Speed at 1.00 and MAP against TPS at  0.88, 
-# so the two pairs are two readings of the same two quantities. 
-# Matching scores mean the rung carries two measurements, not four. 
+# Importances are refitted here so the section stands alone; min to max is the spread
+# across folds. The split underneath scores two halves of the port set, then all four.
 
 per_fold_importance = []
 for train, _ in blocked.split(X, y):
     forest.fit(X[train], y[train])
     per_fold_importance.append(forest.feature_importances_)
 importance = pd.DataFrame(per_fold_importance, columns=PORT).agg(["mean", "min", "max"]).T
-print("\nforest importance for each port column, across the five folds")
-print(importance.round(3).to_string())
+importance.index.name = "column"
+save_result(importance, "port_importance.csv", index=True)
 
 def blocked_f1(columns):
     # The same splitter and model the ladder uses, on a subset of the port columns.
@@ -84,23 +81,26 @@ def blocked_f1(columns):
         forest.fit(subset[train], y[train])
         scores.append(f1_score(y[test], forest.predict(subset[test]), average="macro"))
     return np.mean(scores), min(scores), max(scores)
-print("\nblocked macro F1 from parts of the port set   (random guessing is about 0.25)")
+subset_rows = []
 for label, columns in [("rpm + map only", ["rpm", "map"]),
                        ("speed + tps only", ["speed", "tps"]),
                        ("all four", PORT)]: # 'all four' repeats the ladder's bottom rung.
     mean, low, high = blocked_f1(columns)
-    print(f"   {label:<18} {mean:.3f}   ({low:.3f} to {high:.3f})")
+    subset_rows.append({"subset": label, "macro_f1": mean,
+                        "lowest_fold": low, "highest_fold": high})
+
+save_result(pd.DataFrame(subset_rows), "port_subsets.csv")
 
 # 3. CAN ENGINE SPEED AND LOAD BE MATCHED AT ALL?
 # Band rpm and map, then ask how well a column tells two classes apart in one cell.
 # Separability is the chance a random row of one class outranks one of another, 
 # averaged over the six pairs and folded so direction does not matter; 0.50 none, 1.00 perfect.
-# Read rpm first. The bands are what hold it fixed
+# Read rpm first. The bands hold it fixed
 # if it is not near 0.50 they matched nothing and the rest of the table is not a matched comparison (Section 4 needs no match)
 
 def tells_apart(values, group):
     area = roc_auc_score(group, values)
-    return float(max(area, 1 - area))           # which way round does not matter
+    return float(max(area, 1 - area))           # which way does not matter
 
 def separability(frame, column):
     scores = []
@@ -127,31 +127,13 @@ for bands in (4, 3, 2):
 whole = {column: separability(df, column) for column in PORT}
 cell_rows.insert(0, {"cell": "whole dataset, unmatched", "rows": len(df), **whole})
 comparison = pd.DataFrame(cell_rows).set_index("cell")
-print(f"\nclass separability, 0.50 is indistinguishable and 1.00 is perfect "
-      f"(cells need {MIN_ROWS}+ rows of all four classes)")
-print(comparison.round(3).to_string())
+comparison["bands"] = bands          # the resolution this table was measured at
 print(f"bands used: {bands} per axis")
 save_result(comparison, "matched_separation.csv", index=True)
 
-unmatched = comparison.iloc[0]          # section 4 reads this row as well
-if len(comparison) == 1:
-    print("\nno operating cell holds all four classes, so the classes never share an "
-          "operating point and the matched comparison cannot be made at all")
-else:
-    cells = comparison.iloc[1:]
-    print(f"\n{len(cells)} of {bands * bands} cells qualify, at {bands} bands per axis")
-    for column in PORT:
-        print(f"   {column:<6} unmatched {unmatched[column]:.3f}   "
-              f"matched mean {cells[column].mean():.3f}")
-    print(f"   the bands held rpm to {cells['rpm'].mean():.3f}, against 0.500 if the "
-          f"match had worked")
-
-# 4. IS THE CLASS DIFFERENCE LARGER THAN THE DRIFT INSIDE ONE BLOCK?
-# The four labels sit in contiguous blocks, and the paper describes each fault being induced then recorded, 
-# so on that reading block and fault are the same variable and nothing here separates them. 
-# What can be measured is which is larger.
-# Cut a block in half: both halves carry the same label, so anything above 0.50 is drift alone
-# A column that tells two halves apart better than it tells two faults apart is reporting position.
+# 4. EACH BLOCK'S TWO HALVES
+# Cut a block in half and score how well each column tells the halves apart, (on the same scale as section 3)
+# Read against the unmatched row of matched_separation.csv
 
 drift_rows = []
 for start, end, label in class_runs(y):
@@ -161,11 +143,3 @@ for start, end, label in class_runs(y):
     drift_rows.append({"recording": names[label], "rows": len(block), **scores})
 drift = pd.DataFrame(drift_rows).set_index("recording")
 save_result(drift, "within_recording_drift.csv", index=True)
-
-# The between-fault row from section 3, printed underneath so the comparison sits in one table rather than across two.
-# A block above that row separated its own two halves better than any two faults separate
-shown = pd.concat([drift, unmatched.to_frame("between faults").T])
-shown["rows"] = shown["rows"].astype(int)
-print("\nfirst half against second half of one block, same fault throughout,")
-print("with the between-fault row underneath for comparison")
-print(shown.round(3).to_string())
