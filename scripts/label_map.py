@@ -1,9 +1,8 @@
 # WHICH NUMERIC LABEL IS WHICH FAULT
-# The paper settles the names, so this checks them rather than deriving them.
+# The paper settles the names. this checks them rather than deriving them.
 # Vergara et al., IEEE Access 11 (2023): Table 4 names the faults, Section II-B says label 0 is no fault.
 # Section III-A gives the record count for each.
 
-import matplotlib.pyplot as plt
 import pandas as pd
 from src import config
 from src.data_io import load, save_result
@@ -33,14 +32,11 @@ table.index = [names[label] for label in table.index]
 full = q.copy()
 full.columns = [f"{channel} q{int(point * 100)}" for channel, point in full.columns]
 full.index = table.index
-print("\n" + table.round(3).to_string())
-
 
 # HOW EACH CHECK PRINTS
 def verdict(ok, expected, numbers):
     # Print what should be true, and whether it is. FAIL means stop and look.
     print(f"{'pass' if ok else 'FAIL'}  {expected}   ({numbers})")
-
 
 # ONE CHECK PER CLASS
 # No fault is the reference the two mixture checks are measured against, so it gets no check of its own. 
@@ -50,9 +46,7 @@ def verdict(ok, expected, numbers):
 print()
 counts = df["fault"].value_counts()
 verdict(all(int(counts[label]) == PAPER_COUNTS[name] for label, name in names.items()),
-        "record counts match the paper, all four classes",
-        ", ".join(f"{counts[label]:,}" for label in sorted(names)))
-
+        "record counts match the paper, all four classes", ", ".join(f"{counts[label]:,}" for label in sorted(names)))
 no_fault, rich = table.loc["no fault"], table.loc["rich mixture"]
 lean, low = table.loc["lean mixture"], table.loc["low voltage"]
 
@@ -85,31 +79,4 @@ verdict(set(pair) == {2, 3},
         "lean and low voltage are the closest pair, as the paper says",
         f"labels {pair[0]}+{pair[1]} at {closest:.3f}, next pair {next_closest:.3f}")
 
-
-# THE CHANNEL BEHIND EACH CHECK
-# plotted similar to Vergara et al.
-fig, axes = plt.subplots(1, 3, figsize=(12, 3.2))
-titles = ["lambda   (richer below, leaner above)", "CO % ",
-          "HC ppm   (weak sparks leave fuel)"]
-for ax, column, title in zip(axes, ["lambda_", "co", "hc"], titles):
-    df.boxplot(column=column, by="fault", ax=ax, showfliers=False, grid=False)
-    ax.set_title(title, fontsize=10)
-    ax.set_xlabel("")
-    ax.set_xticklabels([names[label].replace(" ", "\n") for label in sorted(names)],
-                       fontsize=8)
-
-# Two reference lines, because the classes are arranged around the second one and not the first
-# This engine runs rich even with no fault, so "lean" here means leaner than this engine's own baseline, not above stoichiometric
-baseline = float(df[df["fault"] == 0]["lambda_"].median())
-axes[0].axhline(1.0, color="red", linestyle="--", linewidth=1)
-axes[0].axhline(baseline, color="grey", linestyle=":", linewidth=1.2)
-axes[0].text(0.55, 1.0, " stoichiometric", fontsize=7, color="red", va="bottom")
-axes[0].text(0.55, baseline, " tested engine", fontsize=7, color="grey", va="bottom")
-fig.suptitle("")
-plt.tight_layout()
-plt.savefig(config.FIGURES / "label_evidence.png", dpi=150)
-plt.show()
-
-print()
 save_result(full, "label_evidence.csv", index=True)
-print("saved figures/label_evidence.png")
