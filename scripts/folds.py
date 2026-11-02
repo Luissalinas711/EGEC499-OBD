@@ -12,12 +12,11 @@ df = load()
 y = df["fault"].to_numpy()
 purge = purge_width()
 print(f"purge band is {purge} rows, from the slowest week 1 column")
-
 for question, passed in check_split(y, BlockedSplit(FOLDS, purge)).items():
     print(f"   {'pass' if passed else 'FAIL'}  {question}")
 
 # TEST PIECE DRIFT
-# How far a block's median moves between its five test pieces, against the spread of the block itself. 
+# How far a block's median moves between its five test pieces, against the spread of the block itself.
 # The denominator is the whole block's IQR, taken once with nothing held fixed
 
 runs = class_runs(y)
@@ -31,11 +30,5 @@ for column in ["rpm", "map"]:
         by_block.append((max(medians) - min(medians))
                         / (block.quantile(0.75) - block.quantile(0.25)))
     spreads[column] = by_block
-
 drift = pd.DataFrame(spreads, index=[names[label] for _, _, label in runs])
-print("\ntest piece drift, as a fraction of each block's own IQR")
-print(drift.round(2).to_string())
-print(f"worst is {drift.max().max():.2f}; over 0.5 (my line, not a standard) a fold is "
-      f"partly testing conditions the model never trained on")
-print()
 save_result(drift, "fold_drift.csv", index=True)
