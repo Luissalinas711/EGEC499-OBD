@@ -1,12 +1,10 @@
 # WEEK 1: CHECKING THE THREE THINGS DR. CHOI FLAGGED, AND EVERY ROW OF HIS DATA TABLE
-
 # Run the start cell first.
 # Every check prints my number next to the plan's number, and everything gets saved to results/week1_structure.json
 
 import json
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.model_selection import train_test_split
@@ -68,17 +66,6 @@ tps_range = [round(float(df["tps"].min()), 2), round(float(df["tps"].max()), 2)]
 compare("map min and max", map_range, "about 0.45 to 4.55")
 compare("tps min and max", tps_range, "about 0.38 to 4.05")
 
-# This picture cannot tell volts from kPa, because turning a sensor voltage into kPa is a straight-line
-# What it can show is that the columns behave like MAP and TPS: MAP should climb as the throttle opens
-plt.figure(figsize=(5, 4))
-plt.scatter(df["tps"], df["map"], s=2, alpha=0.2)
-plt.xlabel("TPS as recorded (probably volts)")
-plt.ylabel("MAP as recorded (probably volts)")
-plt.title("MAP against throttle position")
-plt.savefig(config.FIGURES / "week1_map_vs_tps.png", dpi=150)
-plt.show()
-
-
 # FLAGGED ITEM 2: THE FILE IS SORTED BY CLASS, AND NEIGHBOURING ROWS ARE NEAR COPIES
 
 print("\n item 2: sorted file and near-copy rows ")
@@ -102,7 +89,6 @@ for column in columns:
                      "n_eff": n * (1 - r) / (1 + r)})   # rows that are really independent
 table = pd.DataFrame(rows)
 save_result(table, "week1_lag1.csv")
-print(table.pivot(index="column", columns="label", values="lag1").round(4))
 
 rpm = table[table["column"] == "rpm"]
 map_ = table[table["column"] == "map"]
@@ -146,7 +132,7 @@ compare("block split macro F1", round(block_f1, 3), 0.48)
 print("\n HCRL driving dataset ")
 # Download the CSV from https://ocslab.hksecurity.net/Datasets/driving-dataset
 # (academic use only, so it stays out of the repo) and put it in data/raw/hcrl/
-# The car (a Kia Soul) and the 46 km route come from the download page and cannot be checked from the file itself.
+# The car (a Kia Soul) and the 46 km route come from the download page 
 hcrl_files = find_csvs(RAW / "hcrl", "https://ocslab.hksecurity.net/Datasets/driving-dataset")
 if hcrl_files:
     hcrl = pd.read_csv(hcrl_files[0])
@@ -169,9 +155,7 @@ if hcrl_files:
         compare("hcrl typical time step (s)", float(np.median(steps)), "one record per second")
 
     # At one record per second, the record count says how long the driving lasted
-    # 94,400 records would be about 26 hours, so this is worth a look against his 23
     compare("hcrl hours at 1 per second", round(len(hcrl) / 3600, 1), "roughly 23 hours")
-
 
 # KIT AUTOMOTIVE DATASET (REAL DRIVES, OTHER VEHICLES, NO FAULT LABELS)
 print("\n KIT driving dataset ")
@@ -225,4 +209,4 @@ if code_files:
 found["run_at"] = pd.Timestamp.now().strftime("%d %b %H:%M")
 with open(config.RESULTS / "week1_structure.json", "w") as f:
     json.dump(found, f, indent=2)
-print("\nsaved results/week1_structure.json and figures/week1_map_vs_tps.png")
+print("\nsaved results/week1_structure.json")
