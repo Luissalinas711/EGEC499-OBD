@@ -42,6 +42,7 @@ Needs pandas, numpy, scipy, scikit-learn and matplotlib. Everything runs in Goog
 | `scripts/diagnostics.py` | script | four checks on the port-only rung |
 | `scripts/segments.py` | script | the segments inside each block, and what each one holds |
 | `scripts/segment_ladder.py` | script | the ladder again, with whole segments held out |
+| `scripts/operating_points.py` | script | every pair of segments: how far apart their operating points and their other columns are |
 | `scripts/duplication_check.py` | script | compares the low-voltage block with the lean-mixture block |
 | `scripts/report.py` | script | rebuilds every table and figure from the committed results |
 | `colab/startup_cell.py` | cell | mounts Drive, sets up git, clones the repo, fetches the data |
@@ -67,7 +68,8 @@ Run `colab/startup_cell.py` as the first cell of the session, then each script b
 | 5 | `scripts/diagnostics.py` | `port_rung_folds.csv`, `port_confusion.csv`, `port_importance.csv`, `port_subsets.csv`, `matched_separation.csv`, `within_recording_drift.csv` | step 1 |
 | 6 | `scripts/segments.py` | `segment_edges.csv`, `segment_points.csv`, `segment_distance.csv`, `segment_settling.csv`, `segment_lag1.csv` | the CSV |
 | 7 | `scripts/segment_ladder.py` | `segment_ladder.csv`, `segment_ladder_folds.csv` | the CSV |
-| 8 | `scripts/report.py` | every table, and all four figures | steps 1 to 7 |
+| 8 | `scripts/operating_points.py` | `operating_point_pairs.csv` | the CSV |
+| 9 | `scripts/report.py` | every table, and all four figures | steps 1 to 8 |
 
 `scripts/duplication_check.py` is not in that order and nothing depends on it.
 It reads the CSV, prints its own report and writes no files, so it can be run at any time.
@@ -75,7 +77,7 @@ It reads the CSV, prints its own report and writes no files, so it can be run at
 The producing scripts save and check; none of them print a table or draw a figure.
 `report.py` does all of that, from the committed results, and deletes the figures folder first so a leftover file cannot be mistaken for a current one.
 
-Steps 2, 3 and 6 are quick to run. Steps 4 and 7 are the slow ones, which is why each writes a CSV.
+Steps 2, 3, 6 and 8 are quick to run. Steps 4 and 7 are the slow ones, which is why each writes a CSV.
 Reporting is a separate script so that the figure and the tables can be changed and re-run.
 
 These paths are Colab's. `src/config.py` writes results to `/content/drive/MyDrive/`, so running anywhere else means changing `DRIVE` there first.
@@ -126,6 +128,9 @@ A second design holds out whole segments instead of row spans.
 `scripts/segment_ladder.py` runs the same ladder on those folds, with no purge band.
 Its rules and its result are recorded in `protocol.md`.
 
+A further check asks whether different faults were recorded at the same operating points, and what separates them where they were.
+`scripts/operating_points.py` compares every pair of segments on engine speed, MAP and TPS, and then on every other column, under the rule in `protocol.md`.
+
 Macro F1 is the primary metric, reported as the range across the folds and not as a single number.
 Uniform random guessing over these four classes scores 0.249.
 A difference between two rungs is also tested with a paired *t*-test on the five matched folds.
@@ -152,9 +157,19 @@ As of 11 November 2026. Each item names the file it comes from.
   Of the other 56, the 14 low-voltage segments are the repeats.
 
 - **Fault is confounded with operating point.**
-  Each class was recorded at its own operating points.
-  On engine speed, MAP and TPS, a segment's nearest neighbor in another class is on average 0.41 to 0.65 whole-file standard deviations away, against 0.01 for lean and low voltage (`segment_distance.csv`).
+  Each class was recorded mostly at its own operating points.
+  Of the 581 pairs of segments from different classes, 3 sit at a matched operating point and 10 at a matched or loosely matched one (`operating_point_pairs.csv`, low voltage left out, rule in `protocol.md`).
+  27 of the 42 segments have no such partner in another class, and no fault and lean mixture share no matched point at all.
+  For 20 of the 42 segments, the nearest segment outside their own fold is of their own class, so operating point alone points to the wrong class for the other 22.
   A score above chance can therefore come from recognizing operating points, not faults.
+
+- **Where two classes do share an operating point, the columns that separate them are analyzer gases and lambda.**
+  A column separates two classes when its smallest gap between them is larger than its largest gap among same-class pairs at shared points.
+  On both the matched and the loosely matched pairs, HC separates no fault from rich mixture, and lambda, CO and CO2 separate rich from lean mixture.
+  HC and CO2 separate no fault from lean mixture on the loosely matched pairs, the only ones those two classes share.
+  Force and O2 each pass once, on the matched pairs only.
+  Engine speed, MAP and TPS are what the pairs were matched on, so at these points the port readings are nearly the same for both classes and give a model little to tell them apart with.
+  Each verdict rests on one to four pairs and several pass narrowly, so this is a description and not a test.
 
 - **MAP and TPS are recorded in volts, not the kPa and percent the paper states.**
   They range from 0.45 to 4.55 and from 0.38 to 4.05 (`week1_structure.json`), the same ranges as the paper's Table 5.
