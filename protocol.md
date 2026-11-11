@@ -41,37 +41,33 @@ Committed on: 10 November 2026. The delay was an oversight, not a revision to pr
 
 ## Changes after freezing
 
-- **2 November 2026 — the ladder has five rungs, not six.** The line above says six.
+- **2 November 2026: the ladder has five rungs, not six.**
   `src/audit.py` defines five: all 14, no dynamometer, no analyzer gases, no wideband lambda, dedicated PIDs only.
-  A sixth rung was never written, and the ladder has only ever been run with five.
-  The nesting assertion in `audit.py` holds over the five that exist, so no result depends on the miscount,
-  but the number above was wrong when it was written and is left as written.
+  A sixth was never written, so the count above was wrong when it was written and is left as written.
+  No result depends on it.
 
-- **2 November 2026 — the purge band stays at 500, from a refined figure.** The line above gives TPS at 0.9986.
-  The committed run gives TPS at 0.998314 in the low-voltage block (`week1_lag1.csv`), which is the largest block-level lag-1 in the file.
-  `purge_width()` derives the band from that value rather than from a number typed in here, and it still rounds to 500, so the design is unchanged.
-  The column named above was the right one.
+- **2 November 2026: a paired *t*-test on the five matched folds was added.**
+  It is run for every adjacent pair of rungs and for the top rung against the bottom one, using the per-fold scores in `ladder_folds.csv`.
+  It adds to the fold range and does not replace it.
+  Five pairs is a small sample, and the test is reported as such.
 
-- **2 November 2026 — added a paired *t*-test across the five matched folds** for every adjacent rung pair and for the top-to-bottom comparison.
-  This is an addition, not a replacement to prior work. `scripts/ladder.py` now writes `ladder_folds.csv` so the per-fold scores exist to test.
-  Five pairs is a small sample and the test is reported as such.
+- **2 November 2026: both conditions under "What would change my mind" were met, and are reported.**
+  Adjacent rungs: on the random forest every adjacent pair overlaps in its fold range, so no drop between rungs is claimed.
+  The paired test agrees, with the top rung against the bottom one at *p* = 0.846.
+  Lowest rung: the random forest's fold range there is 0.188 to 0.435, which covers random guessing at 0.249,
+  so the port-only set is reported as carrying no established fault signal in this dataset.
+  Logistic regression is the one model that falls across the ladder: its fold range is 0.259 to 0.440 at the top rung and 0.075 to 0.176 at the bottom, *p* = 0.005.
 
-- **2 November 2026 — both "what would change my mind" conditions fired, and were
-  reported.** Adjacent rungs do overlap in their fold ranges on the random forest, so no drop between them is claimed.
-  The paired test agrees, with the full top-to-bottom comparison at*p* = 0.846.
-  And the lowest rung's fold range does cover random guessing, so the port-only set is reported as carrying no established fault signal in this dataset.
-  Logistic regression is the one model that does fall across the ladder, and it ends at 0.143.
-
-- **10 November 2026 — the three-class adjustment above is the wrong one.**
+- **10 November 2026: merging labels 2 and 3 is the wrong three-class adjustment.**
   "Labels 2 and 3 merged" was written on the assumption that those two classes were hard to separate.
-  They are not merely hard to separate: the low-voltage block's MAP and TPS columns are bit-identical to the lean block's, offset by one segment, across all 14,000 rows.
-  Merging two classes when one is a copy of the other hides the problem inside a better-looking score.
-  The three-class run that matters drops the low-voltage block instead, and has not yet been run.
-  The merged figure stays in `ladder.csv` as `three_class_f1` because it is what the committed run produced, and it should not be reported as the three-class result.
+  It is more than that: the low-voltage block's MAP and TPS columns are identical to the lean block's, offset by one segment, across all 14,000 rows (`duplication.md`).
+  Merging two classes when one repeats the other hides the problem inside a better-looking score.
+  The three-class run that matters drops the low-voltage block, and it has not been run yet.
+  `three_class_f1` in `ladder.csv` is the merged figure. It stays because the committed run produced it, and it should not be reported as the three-class result.
 
-- **10 November 2026 — folds should hold out whole segments.**
+- **10 November 2026: the next run will hold out whole segments.**
   The blocked split above cuts each class block into five row spans.
-  Whole-segment folds are a better match to how the file was recorded and make the purge band unnecessary.
-  When that rerun happens, the fourteen copied pairs in `duplication.md` have to be held out together
-  (lean segment *k*+1 with low-voltage segment *k*) or the split puts a segment and its own copy on opposite sides and reintroduces the leakage this design exists to prevent.
-  Nothing above is withdraw until that run exists and is reported beside the current one.
+  Whole 1000-row segments match how the file was recorded and need no purge band.
+  The fourteen repeated pairs in `duplication.md` (lean segment *k*+1 with low-voltage segment *k*) have to be held out together,
+  or a segment and its repeat land on opposite sides of the split.
+  Nothing above is withdrawn until that run exists and is reported beside the current one.
