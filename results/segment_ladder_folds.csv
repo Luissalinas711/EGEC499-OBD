@@ -1,0 +1,221 @@
+view,model,rung,fold,macro_f1,run_at
+four classes,random forest,all 14 (laboratory),1,0.13828791783843508,11 Nov 18:32
+four classes,random forest,all 14 (laboratory),2,0.2758713188029504,11 Nov 18:32
+four classes,random forest,all 14 (laboratory),3,0.390277060598277,11 Nov 18:32
+four classes,random forest,all 14 (laboratory),4,0.44424018039484536,11 Nov 18:32
+four classes,random forest,all 14 (laboratory),5,0.4455522340908602,11 Nov 18:32
+four classes,random forest,all 14 (laboratory),6,0.378319445943531,11 Nov 18:32
+four classes,random forest,all 14 (laboratory),7,0.4128272829059277,11 Nov 18:32
+four classes,random forest,all 14 (laboratory),8,0.34226701021014977,11 Nov 18:32
+four classes,random forest,all 14 (laboratory),9,0.1,11 Nov 18:32
+four classes,random forest,all 14 (laboratory),10,0.25,11 Nov 18:32
+four classes,random forest,all 14 (laboratory),11,0.12196080514100589,11 Nov 18:32
+four classes,random forest,no dynamometer,1,0.3484113966857333,11 Nov 18:32
+four classes,random forest,no dynamometer,2,0.26874659149254787,11 Nov 18:32
+four classes,random forest,no dynamometer,3,0.3146663665125833,11 Nov 18:32
+four classes,random forest,no dynamometer,4,0.3522083386459203,11 Nov 18:32
+four classes,random forest,no dynamometer,5,0.3754184606945493,11 Nov 18:32
+four classes,random forest,no dynamometer,6,0.37440531825579715,11 Nov 18:32
+four classes,random forest,no dynamometer,7,0.39410947307689337,11 Nov 18:32
+four classes,random forest,no dynamometer,8,0.34600275532720487,11 Nov 18:32
+four classes,random forest,no dynamometer,9,0.1,11 Nov 18:32
+four classes,random forest,no dynamometer,10,0.25132978723404253,11 Nov 18:32
+four classes,random forest,no dynamometer,11,0.375,11 Nov 18:32
+four classes,random forest,no analyser gases,1,0.345930077378827,11 Nov 18:32
+four classes,random forest,no analyser gases,2,0.29231388454811624,11 Nov 18:32
+four classes,random forest,no analyser gases,3,0.2804139974132167,11 Nov 18:32
+four classes,random forest,no analyser gases,4,0.2005290170235576,11 Nov 18:32
+four classes,random forest,no analyser gases,5,0.37217705281951313,11 Nov 18:32
+four classes,random forest,no analyser gases,6,0.2838119793832841,11 Nov 18:32
+four classes,random forest,no analyser gases,7,0.3276031500819114,11 Nov 18:32
+four classes,random forest,no analyser gases,8,0.2882121572729612,11 Nov 18:32
+four classes,random forest,no analyser gases,9,0.05291240058876648,11 Nov 18:32
+four classes,random forest,no analyser gases,10,0.3438336240579951,11 Nov 18:32
+four classes,random forest,no analyser gases,11,0.2984478199841137,11 Nov 18:32
+four classes,random forest,no wideband lambda,1,0.3349518334933519,11 Nov 18:32
+four classes,random forest,no wideband lambda,2,0.3432857780911475,11 Nov 18:32
+four classes,random forest,no wideband lambda,3,0.1472745415962397,11 Nov 18:32
+four classes,random forest,no wideband lambda,4,0.17125949843572744,11 Nov 18:32
+four classes,random forest,no wideband lambda,5,0.37393846931291425,11 Nov 18:32
+four classes,random forest,no wideband lambda,6,0.3481259926531193,11 Nov 18:32
+four classes,random forest,no wideband lambda,7,0.4243177068763738,11 Nov 18:32
+four classes,random forest,no wideband lambda,8,0.011408932405572943,11 Nov 18:32
+four classes,random forest,no wideband lambda,9,0.06416716094636189,11 Nov 18:32
+four classes,random forest,no wideband lambda,10,0.344469532063329,11 Nov 18:32
+four classes,random forest,no wideband lambda,11,0.307532519883787,11 Nov 18:32
+four classes,random forest,dedicated PIDs only,1,0.34005620332925457,11 Nov 18:32
+four classes,random forest,dedicated PIDs only,2,0.26786648052113704,11 Nov 18:32
+four classes,random forest,dedicated PIDs only,3,0.21917269520692761,11 Nov 18:32
+four classes,random forest,dedicated PIDs only,4,0.12241239092198967,11 Nov 18:32
+four classes,random forest,dedicated PIDs only,5,0.3351332520100123,11 Nov 18:32
+four classes,random forest,dedicated PIDs only,6,0.5892313309395507,11 Nov 18:32
+four classes,random forest,dedicated PIDs only,7,0.3457973064005957,11 Nov 18:32
+four classes,random forest,dedicated PIDs only,8,0.28004335712586026,11 Nov 18:32
+four classes,random forest,dedicated PIDs only,9,0.2161545875247478,11 Nov 18:32
+four classes,random forest,dedicated PIDs only,10,0.29732737227963596,11 Nov 18:32
+four classes,random forest,dedicated PIDs only,11,0.009243409791167409,11 Nov 18:32
+four classes,logistic regression,all 14 (laboratory),1,0.287775520516832,11 Nov 18:32
+four classes,logistic regression,all 14 (laboratory),2,0.5264607899900848,11 Nov 18:32
+four classes,logistic regression,all 14 (laboratory),3,0.4556518751399892,11 Nov 18:32
+four classes,logistic regression,all 14 (laboratory),4,0.16148123303424497,11 Nov 18:32
+four classes,logistic regression,all 14 (laboratory),5,0.45560059158043675,11 Nov 18:32
+four classes,logistic regression,all 14 (laboratory),6,0.15991236931762576,11 Nov 18:32
+four classes,logistic regression,all 14 (laboratory),7,0.4756661148334347,11 Nov 18:32
+four classes,logistic regression,all 14 (laboratory),8,0.3620605758959403,11 Nov 18:32
+four classes,logistic regression,all 14 (laboratory),9,0.33583481156576117,11 Nov 18:32
+four classes,logistic regression,all 14 (laboratory),10,0.21620259605517322,11 Nov 18:32
+four classes,logistic regression,all 14 (laboratory),11,0.38467133801901576,11 Nov 18:32
+four classes,logistic regression,no dynamometer,1,0.3000757979420812,11 Nov 18:32
+four classes,logistic regression,no dynamometer,2,0.6384743940228411,11 Nov 18:32
+four classes,logistic regression,no dynamometer,3,0.37821234665384024,11 Nov 18:32
+four classes,logistic regression,no dynamometer,4,0.1600970969233157,11 Nov 18:32
+four classes,logistic regression,no dynamometer,5,0.3962539932103432,11 Nov 18:32
+four classes,logistic regression,no dynamometer,6,0.14475365612932373,11 Nov 18:32
+four classes,logistic regression,no dynamometer,7,0.5088034378101509,11 Nov 18:32
+four classes,logistic regression,no dynamometer,8,0.5033212352501792,11 Nov 18:32
+four classes,logistic regression,no dynamometer,9,0.2628615852946245,11 Nov 18:32
+four classes,logistic regression,no dynamometer,10,0.10828995284910377,11 Nov 18:32
+four classes,logistic regression,no dynamometer,11,0.3191097883897397,11 Nov 18:32
+four classes,logistic regression,no analyser gases,1,0.44639946044752904,11 Nov 18:32
+four classes,logistic regression,no analyser gases,2,0.14408084156810333,11 Nov 18:32
+four classes,logistic regression,no analyser gases,3,0.09407511638519472,11 Nov 18:32
+four classes,logistic regression,no analyser gases,4,0.038639617165590556,11 Nov 18:32
+four classes,logistic regression,no analyser gases,5,0.13592592150289362,11 Nov 18:32
+four classes,logistic regression,no analyser gases,6,0.15435823262613957,11 Nov 18:32
+four classes,logistic regression,no analyser gases,7,0.4182326847008584,11 Nov 18:32
+four classes,logistic regression,no analyser gases,8,0.09768352722262037,11 Nov 18:32
+four classes,logistic regression,no analyser gases,9,0.25791324866670406,11 Nov 18:32
+four classes,logistic regression,no analyser gases,10,0.15474970257962894,11 Nov 18:32
+four classes,logistic regression,no analyser gases,11,0.17162669198385186,11 Nov 18:32
+four classes,logistic regression,no wideband lambda,1,0.41712079638988775,11 Nov 18:32
+four classes,logistic regression,no wideband lambda,2,0.3142293223684525,11 Nov 18:32
+four classes,logistic regression,no wideband lambda,3,0.08460236886632826,11 Nov 18:32
+four classes,logistic regression,no wideband lambda,4,0.024696217413493503,11 Nov 18:32
+four classes,logistic regression,no wideband lambda,5,0.11763297781266545,11 Nov 18:32
+four classes,logistic regression,no wideband lambda,6,0.22420986371317503,11 Nov 18:32
+four classes,logistic regression,no wideband lambda,7,0.3547586525120266,11 Nov 18:32
+four classes,logistic regression,no wideband lambda,8,0.0,11 Nov 18:32
+four classes,logistic regression,no wideband lambda,9,0.12034992069382702,11 Nov 18:32
+four classes,logistic regression,no wideband lambda,10,0.0004803073967339097,11 Nov 18:32
+four classes,logistic regression,no wideband lambda,11,0.16755496454215918,11 Nov 18:32
+four classes,logistic regression,dedicated PIDs only,1,0.42500888441579365,11 Nov 18:32
+four classes,logistic regression,dedicated PIDs only,2,0.1828487262467845,11 Nov 18:32
+four classes,logistic regression,dedicated PIDs only,3,0.06250781347668459,11 Nov 18:32
+four classes,logistic regression,dedicated PIDs only,4,0.1831316234639783,11 Nov 18:32
+four classes,logistic regression,dedicated PIDs only,5,0.20803067684252569,11 Nov 18:32
+four classes,logistic regression,dedicated PIDs only,6,0.00013935340022296544,11 Nov 18:32
+four classes,logistic regression,dedicated PIDs only,7,0.118713199269388,11 Nov 18:32
+four classes,logistic regression,dedicated PIDs only,8,0.10096930533117932,11 Nov 18:32
+four classes,logistic regression,dedicated PIDs only,9,0.13780646675383518,11 Nov 18:32
+four classes,logistic regression,dedicated PIDs only,10,0.033034600256929995,11 Nov 18:32
+four classes,logistic regression,dedicated PIDs only,11,0.0004992511233150275,11 Nov 18:32
+three classes,random forest,all 14 (laboratory),1,0.3059700336230806,11 Nov 18:32
+three classes,random forest,all 14 (laboratory),2,0.35503071419299465,11 Nov 18:32
+three classes,random forest,all 14 (laboratory),3,0.4997918644454186,11 Nov 18:32
+three classes,random forest,all 14 (laboratory),4,0.4351644678371302,11 Nov 18:32
+three classes,random forest,all 14 (laboratory),5,0.5550189237595063,11 Nov 18:32
+three classes,random forest,all 14 (laboratory),6,0.6941739593587785,11 Nov 18:32
+three classes,random forest,all 14 (laboratory),7,0.5470561747157492,11 Nov 18:32
+three classes,random forest,all 14 (laboratory),8,0.5511546435500725,11 Nov 18:32
+three classes,random forest,all 14 (laboratory),9,0.24769868446525753,11 Nov 18:32
+three classes,random forest,all 14 (laboratory),10,0.3333333333333333,11 Nov 18:32
+three classes,random forest,all 14 (laboratory),11,0.22373012908089182,11 Nov 18:32
+three classes,random forest,no dynamometer,1,0.4224591359739325,11 Nov 18:32
+three classes,random forest,no dynamometer,2,0.20321806982169557,11 Nov 18:32
+three classes,random forest,no dynamometer,3,0.4403019863590803,11 Nov 18:32
+three classes,random forest,no dynamometer,4,0.3842085332262591,11 Nov 18:32
+three classes,random forest,no dynamometer,5,0.44802433816125026,11 Nov 18:32
+three classes,random forest,no dynamometer,6,0.5441945217734843,11 Nov 18:32
+three classes,random forest,no dynamometer,7,0.25603739459513747,11 Nov 18:32
+three classes,random forest,no dynamometer,8,0.225067148597239,11 Nov 18:32
+three classes,random forest,no dynamometer,9,0.1651621531260448,11 Nov 18:32
+three classes,random forest,no dynamometer,10,0.3333333333333333,11 Nov 18:32
+three classes,random forest,no dynamometer,11,0.5548328042068653,11 Nov 18:32
+three classes,random forest,no analyser gases,1,0.4610458732600919,11 Nov 18:32
+three classes,random forest,no analyser gases,2,0.3643203392783805,11 Nov 18:32
+three classes,random forest,no analyser gases,3,0.3690790829076671,11 Nov 18:32
+three classes,random forest,no analyser gases,4,0.3040529766205747,11 Nov 18:32
+three classes,random forest,no analyser gases,5,0.4449590001086366,11 Nov 18:32
+three classes,random forest,no analyser gases,6,0.5654255466363305,11 Nov 18:32
+three classes,random forest,no analyser gases,7,0.3775018170849773,11 Nov 18:32
+three classes,random forest,no analyser gases,8,0.18220805493760547,11 Nov 18:32
+three classes,random forest,no analyser gases,9,0.037992284632477176,11 Nov 18:32
+three classes,random forest,no analyser gases,10,0.4609931786304016,11 Nov 18:32
+three classes,random forest,no analyser gases,11,0.3866911990187059,11 Nov 18:32
+three classes,random forest,no wideband lambda,1,0.4542758017847108,11 Nov 18:32
+three classes,random forest,no wideband lambda,2,0.4783611762286059,11 Nov 18:32
+three classes,random forest,no wideband lambda,3,0.15921053758509526,11 Nov 18:32
+three classes,random forest,no wideband lambda,4,0.2053271354865082,11 Nov 18:32
+three classes,random forest,no wideband lambda,5,0.4467960802438671,11 Nov 18:32
+three classes,random forest,no wideband lambda,6,0.5232491941253856,11 Nov 18:32
+three classes,random forest,no wideband lambda,7,0.5210166606346159,11 Nov 18:32
+three classes,random forest,no wideband lambda,8,0.01243048740595355,11 Nov 18:32
+three classes,random forest,no wideband lambda,9,0.08673738443804573,11 Nov 18:32
+three classes,random forest,no wideband lambda,10,0.43248063734860764,11 Nov 18:32
+three classes,random forest,no wideband lambda,11,0.4232987312572088,11 Nov 18:32
+three classes,random forest,dedicated PIDs only,1,0.48956695062158767,11 Nov 18:32
+three classes,random forest,dedicated PIDs only,2,0.3804397062418554,11 Nov 18:32
+three classes,random forest,dedicated PIDs only,3,0.28544515443013535,11 Nov 18:32
+three classes,random forest,dedicated PIDs only,4,0.15208365727113013,11 Nov 18:32
+three classes,random forest,dedicated PIDs only,5,0.3982439453911873,11 Nov 18:32
+three classes,random forest,dedicated PIDs only,6,0.7691664504907454,11 Nov 18:32
+three classes,random forest,dedicated PIDs only,7,0.4578574537326546,11 Nov 18:32
+three classes,random forest,dedicated PIDs only,8,0.3803276686636707,11 Nov 18:32
+three classes,random forest,dedicated PIDs only,9,0.3022887195839889,11 Nov 18:32
+three classes,random forest,dedicated PIDs only,10,0.3502673796791444,11 Nov 18:32
+three classes,random forest,dedicated PIDs only,11,0.015058711504483395,11 Nov 18:32
+three classes,logistic regression,all 14 (laboratory),1,0.3293294235698994,11 Nov 18:32
+three classes,logistic regression,all 14 (laboratory),2,0.7046162930482683,11 Nov 18:32
+three classes,logistic regression,all 14 (laboratory),3,0.5923931789801188,11 Nov 18:32
+three classes,logistic regression,all 14 (laboratory),4,0.264919800484654,11 Nov 18:32
+three classes,logistic regression,all 14 (laboratory),5,0.6935476515524196,11 Nov 18:32
+three classes,logistic regression,all 14 (laboratory),6,0.30100797764166254,11 Nov 18:32
+three classes,logistic regression,all 14 (laboratory),7,0.6577076645706695,11 Nov 18:32
+three classes,logistic regression,all 14 (laboratory),8,0.5389920004052002,11 Nov 18:32
+three classes,logistic regression,all 14 (laboratory),9,0.5503088524901026,11 Nov 18:32
+three classes,logistic regression,all 14 (laboratory),10,0.29562784480091914,11 Nov 18:32
+three classes,logistic regression,all 14 (laboratory),11,0.5776638406591862,11 Nov 18:32
+three classes,logistic regression,no dynamometer,1,0.33639336420695437,11 Nov 18:32
+three classes,logistic regression,no dynamometer,2,0.8488664320528251,11 Nov 18:32
+three classes,logistic regression,no dynamometer,3,0.47998617532379945,11 Nov 18:32
+three classes,logistic regression,no dynamometer,4,0.2560844563197026,11 Nov 18:32
+three classes,logistic regression,no dynamometer,5,0.6162381138527223,11 Nov 18:32
+three classes,logistic regression,no dynamometer,6,0.2661662467697642,11 Nov 18:32
+three classes,logistic regression,no dynamometer,7,0.7221319578450887,11 Nov 18:32
+three classes,logistic regression,no dynamometer,8,0.76956200187935,11 Nov 18:32
+three classes,logistic regression,no dynamometer,9,0.46073884659422076,11 Nov 18:32
+three classes,logistic regression,no dynamometer,10,0.14844778806584363,11 Nov 18:32
+three classes,logistic regression,no dynamometer,11,0.47647201929506894,11 Nov 18:32
+three classes,logistic regression,no analyser gases,1,0.6729024705781558,11 Nov 18:32
+three classes,logistic regression,no analyser gases,2,0.2568554041283618,11 Nov 18:32
+three classes,logistic regression,no analyser gases,3,0.15462711016296823,11 Nov 18:32
+three classes,logistic regression,no analyser gases,4,0.05221294979094241,11 Nov 18:32
+three classes,logistic regression,no analyser gases,5,0.2769896996470958,11 Nov 18:32
+three classes,logistic regression,no analyser gases,6,0.07333424160051927,11 Nov 18:32
+three classes,logistic regression,no analyser gases,7,0.5402735434688553,11 Nov 18:32
+three classes,logistic regression,no analyser gases,8,0.05362954395987538,11 Nov 18:32
+three classes,logistic regression,no analyser gases,9,0.49129090352894655,11 Nov 18:32
+three classes,logistic regression,no analyser gases,10,0.19136220477683893,11 Nov 18:32
+three classes,logistic regression,no analyser gases,11,0.26285142859154925,11 Nov 18:32
+three classes,logistic regression,no wideband lambda,1,0.6348331965033761,11 Nov 18:32
+three classes,logistic regression,no wideband lambda,2,0.5472642579803213,11 Nov 18:32
+three classes,logistic regression,no wideband lambda,3,0.13622122326658495,11 Nov 18:32
+three classes,logistic regression,no wideband lambda,4,0.03496966811047649,11 Nov 18:32
+three classes,logistic regression,no wideband lambda,5,0.20903196339294516,11 Nov 18:32
+three classes,logistic regression,no wideband lambda,6,0.17362756866267315,11 Nov 18:32
+three classes,logistic regression,no wideband lambda,7,0.4711043369535841,11 Nov 18:32
+three classes,logistic regression,no wideband lambda,8,0.0,11 Nov 18:32
+three classes,logistic regression,no wideband lambda,9,0.26796097234261046,11 Nov 18:32
+three classes,logistic regression,no wideband lambda,10,0.0,11 Nov 18:32
+three classes,logistic regression,no wideband lambda,11,0.26884017743956884,11 Nov 18:32
+three classes,logistic regression,dedicated PIDs only,1,0.5972779410241653,11 Nov 18:32
+three classes,logistic regression,dedicated PIDs only,2,0.29962255752722233,11 Nov 18:32
+three classes,logistic regression,dedicated PIDs only,3,0.11112963271656388,11 Nov 18:32
+three classes,logistic regression,dedicated PIDs only,4,0.2996965629289388,11 Nov 18:32
+three classes,logistic regression,dedicated PIDs only,5,0.28587104106298566,11 Nov 18:32
+three classes,logistic regression,dedicated PIDs only,6,0.00025109855618330194,11 Nov 18:32
+three classes,logistic regression,dedicated PIDs only,7,0.20672657010782544,11 Nov 18:32
+three classes,logistic regression,dedicated PIDs only,8,0.16670834375260482,11 Nov 18:32
+three classes,logistic regression,dedicated PIDs only,9,0.20266204326744822,11 Nov 18:32
+three classes,logistic regression,dedicated PIDs only,10,0.021519838601210494,11 Nov 18:32
+three classes,logistic regression,dedicated PIDs only,11,0.0,11 Nov 18:32
