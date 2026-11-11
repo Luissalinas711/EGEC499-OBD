@@ -71,3 +71,74 @@ Committed on: 10 November 2026. The delay was an oversight, not a revision to pr
   The fourteen repeated pairs in `duplication.md` (lean segment *k*+1 with low-voltage segment *k*) have to be held out together,
   or a segment and its repeat land on opposite sides of the split.
   Nothing above is withdrawn until that run exists and is reported beside the current one.
+  The rules for that run are fixed in the next section.
+
+## Segment-based rerun
+
+Written on 11 November 2026, before any segment-based score had been read.
+`scripts/segment_ladder.py` was run once beforehand with its output hidden, only to confirm that it finishes and writes its two files.
+`src/segment_map.py`, which fixes the segments and the folds, was committed at 10:08 that morning, before the run at 10:32.
+The rest of this section was committed after the run, so for everything but the folds the git history cannot show that the rules came first.
+Everything above still applies unless a line here replaces it.
+
+### Unit
+- The unit is the segment. All 56 are listed row by row in `src/segment_map.py`: 16 no fault, 11 rich mixture, 15 lean mixture, 14 low voltage.
+- A boundary is the row where the columns step together. It is read from the measurements, never from a score.
+- Every segment is 1000 rows, with two exceptions.
+  The first and third rich segments are 999 rows.
+  The last row of the file repeats the row before it, and stays with low-voltage segment 14.
+
+### Groups
+- A segment is never split between training and test.
+- Lean segment *n* + 1 and low-voltage segment *n* are always tested in the same fold, for *n* = 1 to 14, because their MAP and TPS columns are identical (`duplication.md`).
+- That leaves 42 groups: 16 no fault, 11 rich mixture, lean segment 1 on its own, and the 14 pairs.
+
+### Folds
+- 11 folds.
+  Why 11: rich mixture has 11 segments, the fewest of any class, so 11 is the most folds in which every fold can test a whole segment of every class.
+- Within each class, segments are dealt to folds 1 to 11 in file order, starting again at fold 1.
+  A low-voltage segment goes to the fold of its paired lean segment.
+  This is fixed here and written out in `src/segment_map.py`. It was not tuned.
+- Folds 1 to 5 test between 5,000 and 7,001 rows and folds 6 to 11 test 4,000, because three of the classes have more than 11 segments.
+- No purge band, because a whole segment is held out and its neighbors in the file are other segments.
+- The shuffled and no-purge controls are not rerun. They stand as reported above.
+
+### Models, rungs and metric
+- Unchanged: the same two models with the same settings, the same five rungs, and macro F1.
+
+### What gets reported
+- Macro F1 as the range across the 11 folds, lowest to highest, with the mean after it.
+- The fold-by-fold drop for each adjacent pair of rungs and for the top rung against the bottom one, with the paired *t*-test on those 11 drops.
+  Eleven pairs is still a small sample, and the test is reported as such.
+- The five-fold blocked result in the same table, so the two designs can be read side by side.
+- Recall for each class. Every fold score is kept in `segment_ladder_folds.csv`.
+
+### Three-class view
+- Four classes stays the primary result.
+- The three-class view leaves the low-voltage rows out of training and out of test. It does not merge them into lean mixture.
+- Same folds, same models, same rungs. Uniform random guessing scores 0.331 on these three classes.
+
+### What would change my mind
+- The two conditions above apply to this run unchanged, with 11 folds in place of 5.
+- If the segment-based result and the blocked result disagree, both are reported and the disagreement is stated.
+  Neither replaces the other without a dated line here.
+- The lean and low-voltage confusion is reported as a property of this dataset, not as a detection limit.
+
+### Result, run on 11 November 2026
+- The full tables are in the README, `segment_ladder.csv` and `segment_ladder_folds.csv`. This entry records how the rules above came out.
+- **Adjacent rungs.** In both models and both views, every adjacent pair of rungs overlaps in its fold range, so no drop between adjacent rungs is claimed from the ranges.
+  On the paired test the random forest has no step below *p* = 0.08.
+  Logistic regression has one, losing the analyzer gases: +0.146 in 8 of 11 folds, *p* = 0.034, with four classes, and +0.214 in 8 of 11 folds, *p* = 0.035, with three.
+- **Top rung against bottom rung.**
+  Random forest: +0.025 in 7 of 11 folds, *p* = 0.616, with four classes, and +0.070 in 6 of 11 folds, *p* = 0.151, with three.
+  Logistic regression: +0.215 in 9 of 11 folds, *p* = 0.002, with four classes, and +0.301 in 9 of 11 folds, *p* = 0.002, with three.
+  Its top and bottom fold ranges overlap here, 0.160 to 0.526 against 0.000 to 0.425 with four classes, which they did not on the blocked folds.
+- **Lowest rung against guessing.** The port-only fold range covers random guessing for both models in both views:
+  0.009 to 0.589 and 0.000 to 0.425 against 0.249, and 0.015 to 0.769 and 0.000 to 0.597 against 0.331.
+  So the port-only set is again reported as carrying no established fault signal in this dataset.
+  The same is true of every other rung, including all 14 columns: every fold range in this run covers guessing.
+- **Against the blocked result.** With four classes the two designs' means are within 0.05 of each other at every rung, and both lead to the same reading.
+  The one difference is the overlap noted above. Both results stay reported.
+  They split the same file, so their agreement is not independent confirmation.
+- **Three-class view.** This is the run the 10 November entry said had not been done. It does not change the reading.
+- The paired tests are not corrected for there being five per model and view.
