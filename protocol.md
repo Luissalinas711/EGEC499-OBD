@@ -177,3 +177,26 @@ What the other columns do at those pairs was not known. The script was run once 
 - If no column separates the classes at the shared operating points, I report that the file shows no fault signature apart from operating point.
 - If some columns do, I report which ones and for which classes.
   I do not extend that to operating points where no pair is shared.
+
+### Result, run on 11 November 2026
+- This section was committed at 11:42 and the run is stamped 11:43, so the rule was on record first.
+  The figures are in `operating_point_pairs.csv`.
+- **Shared operating points.** Of the 581 pairs from different classes, 3 are matched and 10 are matched or loosely matched:
+  1 and 4 for no fault and rich mixture, 0 and 2 for no fault and lean mixture, 2 and 4 for rich and lean mixture.
+  5 of the 42 segments have a matched partner in another class, and 15 have a matched or loosely matched one.
+- **Nearest segment outside a segment's own fold.** It is of the segment's own class for 20 of the 42: 7 of 16 no fault, 4 of 11 rich mixture, 9 of 15 lean mixture.
+- **Columns that separate, on the matched pairs.**
+  No fault and rich mixture, 1 pair: force and HC.
+  Rich and lean mixture, 2 pairs: CO, CO2, O2 and lambda.
+  No fault and lean mixture have no matched pair.
+- **Columns that separate, on the matched or loosely matched pairs.**
+  No fault and rich mixture, 4 pairs: HC.
+  No fault and lean mixture, 2 pairs: HC and CO2.
+  Rich and lean mixture, 4 pairs: CO, CO2 and lambda.
+- AFR passes wherever lambda does, because it is lambda times 14.7.
+- **How firm.** Several of these pass narrowly: CO for rich and lean mixture is 72.08 against a same-class ceiling of 70.43, CO2 is 5.92 against 5.63, and HC for no fault and rich mixture on the looser set is 13.99 against 12.73.
+  The clear ones are lambda for rich and lean mixture, 6.31 against 3.90, and HC for no fault and rich mixture on the matched pair, 95.61 against 12.73.
+- **Against "What would change my mind".** Some columns separate, so they are reported above with their classes.
+  Nothing is claimed for the 27 segments that share no operating point with another class.
+- **Outside the rule, noted after the run.** The same-class ceiling for CO and lambda comes from one pair, rich segments 2 and 7, which differ by 70.43 on CO at a matched operating point.
+  Engine speed, MAP and TPS therefore do not fix the other columns even within one class. The reason has not been tested.
