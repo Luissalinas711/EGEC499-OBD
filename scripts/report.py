@@ -163,6 +163,48 @@ for view_name, part in segment_folds.groupby("view", sort=False):
     print(summary.round(3).to_string(index=False))
 
 
+# DO THE FAULTS SHARE OPERATING POINTS?
+pairs = load_result("operating_point_pairs.csv")
+MATCHED, LOOSE = 1, 2            # largest gap on rpm, map and tps, in within-segment SDs
+pairs["classes"] = np.where(pairs["class a"] == pairs["class b"], "same class",
+                            pairs["class a"] + " / " + pairs["class b"])
+
+counts = pairs.groupby("classes", sort=False)["distance"].agg(
+    pairs="size", matched=lambda d: (d <= MATCHED).sum(), loosely_matched=lambda d: (d <= LOOSE).sum())
+print("\npairs of segments by operating-point distance: at most 1 is matched, at most 2 is loosely matched")
+print(counts.to_string())
+
+close = pairs[pairs["distance"] <= LOOSE].sort_values("distance")
+print("\nevery matched and loosely matched pair")
+print(close[["class a", "segment a", "class b", "segment b", "distance"]].round(2).to_string(index=False))
+
+# Each segment's nearest segment outside its own fold, counted from both ends of every pair
+outside = pairs[pairs["fold a"] != pairs["fold b"]]
+ends = pd.concat([
+    outside.rename(columns={"class a": "class", "segment a": "segment", "class b": "nearest class"}),
+    outside.rename(columns={"class b": "class", "segment b": "segment", "class a": "nearest class"})])
+nearest = ends.sort_values("distance").groupby(["class", "segment"], sort=False).first().reset_index()
+nearest["own class"] = nearest["class"] == nearest["nearest class"]
+print("\nthe nearest segment outside a segment's own fold: how often is it the same class?")
+print(nearest.groupby("class")["own class"].agg(segments="size", nearest_is_own_class="sum")
+      .reindex(pairs["class a"].unique()).to_string())
+
+# The columns that are not part of the operating point, at the pairs that share one
+gap_columns = [column for column in pairs.columns
+               if column.startswith("gap: ") and column[5:] not in ("rpm", "map", "tps")]
+for limit, wording in [(MATCHED, "matched"), (LOOSE, "matched or loosely matched")]:
+    shared = pairs[pairs["distance"] <= limit]
+    same = shared[shared["classes"] == "same class"]
+    for classes, group in shared[shared["classes"] != "same class"].groupby("classes", sort=False):
+        table = pd.DataFrame({"smallest": group[gap_columns].min(), "median": group[gap_columns].median(),
+                              "largest": group[gap_columns].max(), "same class, largest": same[gap_columns].max()})
+        table["separates"] = table["smallest"] > table["same class, largest"]
+        table.index = [column[5:] for column in gap_columns]
+        print(f"\n{classes}, {wording}: {len(group)} pairs. Gaps on the other columns, "
+              f"beside the largest gap among the {len(same)} same-class pairs")
+        print(table.round(2).to_string())
+
+
 # THE PORT-ONLY RUNG: WHAT THE SCORE IS MADE OF
 shares = load_result("port_rung_folds.csv")
 print("\nshare of predictions given to each class, fold by fold")
