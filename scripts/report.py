@@ -95,20 +95,28 @@ SHORT = {"all 14 (laboratory)": "all 14", "no dynamometer": "no dyno",
 # Two rungs are compared on the same five folds, so whatever makes a fold hard for one makes it hard for the other 
 # Comparing the rung means alone cannot do that.
 # Each step is compared, then the whole ladder from the widest rung to the narrowest.
-scores = load_result("ladder_folds.csv").pivot_table(index=["model", "rung"],
-                                                     columns="fold", values="macro_f1")
+model_names = list(ladder["model"].unique())
 steps = list(zip(rungs, rungs[1:])) + [(rungs[0], rungs[-1])]
-comparisons = []
-for model_name in ladder["model"].unique():
-    for wider, narrower in steps:
-        a = scores.loc[(model_name, wider)].to_numpy()
-        b = scores.loc[(model_name, narrower)].to_numpy()
-        comparisons.append({"model": model_name, "step": f"{SHORT[wider]} to {SHORT[narrower]}",
+
+def compare_steps(fold_scores):
+    # For every model and step: the drop in each fold, and a paired t-test on those drops
+    scores = fold_scores.pivot_table(index=["model", "rung"], columns="fold", values="macro_f1")
+    drops, summary = {}, []
+    for model_name in model_names:
+        for wider, narrower in steps:
+            a = scores.loc[(model_name, wider)]
+            b = scores.loc[(model_name, narrower)]
+            step = f"{SHORT[wider]} to {SHORT[narrower]}"
+            drops[(model_name, step)] = a - b
+            summary.append({"model": model_name, "step": step,
                             "mean drop": (a - b).mean(), "folds dropping": int((a > b).sum()),
                             "p": ttest_rel(a, b)[1]})
+    return pd.DataFrame(drops), pd.DataFrame(summary)
+
+drops, summary = compare_steps(load_result("ladder_folds.csv"))
 print("\ndoes the score drop from one rung to the next, fold by fold?")
 print("five folds only, so p is blunt and 0.05 is a floor rather than a verdict")
-print(pd.DataFrame(comparisons).round(3).to_string(index=False))
+print(summary.round(3).to_string(index=False))
 
 positions = np.arange(len(rungs))
 plt.figure(figsize=(7, 4))
@@ -126,6 +134,34 @@ plt.legend(fontsize=9)
 plt.tight_layout()
 plt.savefig(config.FIGURES / "ladder.png", dpi=150)
 plt.close()
+
+# THE LADDER AGAIN, WITH WHOLE SEGMENTS HELD OUT
+segment = load_result("segment_ladder.csv")
+segment_folds = load_result("segment_ladder_folds.csv")
+folds = segment_folds["fold"].nunique()
+shown = ["lowest_fold", "macro_f1", "highest_fold"]
+
+four = segment[segment["view"] == "four classes"]
+beside = ladder[["model", "rung"] + shown].merge(four[["model", "rung"] + shown],
+                                                 on=["model", "rung"], suffixes=(" blocked", " segment"))
+print(f"\nfour classes: the five blocked folds beside the {folds} segment folds")
+print(beside.round(3).to_string(index=False))
+
+print("\nfour classes, segment folds: recall for each class")
+print(four[["model", "rung"] + recall_columns].round(3).to_string(index=False))
+
+three = segment[segment["view"] == "three classes"]
+print(f"\nthree classes, low voltage left out: the {folds} segment folds   (random guessing is about 0.33)")
+print(three[["model", "rung"] + shown].round(3).to_string(index=False))
+
+for view_name, part in segment_folds.groupby("view", sort=False):
+    drops, summary = compare_steps(part)
+    for model_name in model_names:
+        print(f"\n{view_name}, {model_name}: drop from the wider rung to the narrower one in each segment fold")
+        print(drops[model_name].round(3).to_string())
+    print(f"\n{view_name}: the same drops across the {folds} folds, still a small sample for p")
+    print(summary.round(3).to_string(index=False))
+
 
 # THE PORT-ONLY RUNG: WHAT THE SCORE IS MADE OF
 shares = load_result("port_rung_folds.csv")
