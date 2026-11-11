@@ -10,7 +10,6 @@ how much detection performance is lost as the measurements are restricted, and d
 
 Fall 2026 is the analysis on an existing dataset. Spring 2027 is the physical build with an ESP32-based reader, and a survey of what real cars report.
 
-
 ## Data
 
 EngineFaultDB (Vergara et al., IEEE Access 11, 2023, DOI 10.1109/ACCESS.2023.3331316, GPL-3.0) at https://github.com/leoxthomas/EngineFaultDB.
@@ -136,7 +135,7 @@ As of 10 November 2026. Each item names the file it comes from.
 
 - **The low-voltage block repeats the lean-mixture block.**
   Its MAP and TPS columns are identical to lean's, offset by one segment, across all 14,000 rows (file rows 41,998–55,997 against 27,998–41,997).
-  The other twelve columns match segment for segment, each within 0.133 of a within-segment standard deviation.
+  The other twelve columns match segment for segment: their segment means differ by at most 0.1325 of a within-segment standard deviation.
   No other segment repeats anywhere in the file.
   The details are in `duplication.md`, and `scripts/duplication_check.py` reproduces them from the CSV alone.
 
@@ -222,15 +221,3 @@ Earlier claims that no longer stand:
 | The file holds 57 segments | 56, of which 42 are distinct |
 | Restricting to the four PIDs costs almost nothing | No cost has been established; the rungs cannot be told apart |
 
-## What is open
-
-- **A rerun with whole segments held out.**
-  Folds will hold out whole segments instead of row spans, which removes the need for a purge band.
-  The fourteen repeated pairs (lean segment *k*+1 with low-voltage segment *k*) have to be held out together, or a segment and its repeat land on opposite sides of the split.
-  Whole segments are the smallest unit available: nothing in the file marks where one acquisition session ends (`segment_settling.csv`).
-
-- **A three-class run with low voltage dropped.**
-  `three_class_f1` in `ladder.csv` merges lean and low voltage instead, which is not the same measurement.
-
-- **A cross-check on independently collected data**, HCRL and the KIT OBD set,
-  to see whether the cost of restriction measured here belongs to the OBD-II channels or to this one file.
