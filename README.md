@@ -199,13 +199,6 @@ Each cell is the range across the five folds, with the pooled score in brackets 
 
 ## Known defects
 
-- **`scripts/label_map.py` prints `pass` for a check that does not hold.**
-  Lines 66 to 68 check that low voltage has a higher median HC than lean mixture.
-  On whole blocks it does, 164.55 against 163.40.
-  On the 14,000 matched rows in `duplication.md` it reverses, 164.55 against 164.66.
-  The whole-block gap comes from lean's one unmatched segment, whose median is 151.19.
-  The check compares a block with a shifted repeat of itself, so it should be removed, not given a new threshold.
-
 - **`results/week1_structure.json` still carries `"rpm independent rows": 116`.**
   That figure assumed a row-to-row smoothness that `segment_lag1.csv` later showed is not there.
   It stays because the committed run produced it, and it should not be cited.
@@ -217,7 +210,6 @@ Earlier claims that no longer stand:
 | Consecutive rows are near copies of one another | Inside a segment, lag-1 is near zero for twelve of the fourteen columns |
 | Engine speed is worth about 116 independent rows | 42 distinct operating points |
 | Engine speed and road speed are one quantity recorded twice | They are tied by the single gear used; inside a segment their correlation averages 0.06 |
-| Low voltage leaves more unburnt fuel than lean | Reverses on matched rows, as described above |
+| Low voltage leaves more unburnt fuel than lean | On the 14,000 matched rows it reverses: median HC is 164.55 for low voltage against 164.66 for lean. The check was removed from `label_map.py` on 10 November 2026 |
 | The file holds 57 segments | 56, of which 42 are distinct |
 | Restricting to the four PIDs costs almost nothing | No cost has been established; the rungs cannot be told apart |
-
