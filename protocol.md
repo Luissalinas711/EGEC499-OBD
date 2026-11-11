@@ -77,7 +77,7 @@ Committed on: 10 November 2026. The delay was an oversight, not a revision to pr
 
 Written on 11 November 2026, before any segment-based score had been read.
 `scripts/segment_ladder.py` was run once beforehand with its output hidden, only to confirm that it finishes and writes its two files.
-`src/segment_map.py`, which fixes the segments and the folds, was committed at 10:08 that morning, before the run at 10:32.
+`src/segment_map.py`, which fixes the segments and the folds, was committed before the run.
 The rest of this section was committed after the run, so for everything but the folds the git history cannot show that the rules came first.
 Everything above still applies unless a line here replaces it.
 
