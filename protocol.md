@@ -142,3 +142,38 @@ Everything above still applies unless a line here replaces it.
   They split the same file, so their agreement is not independent confirmation.
 - **Three-class view.** This is the run the 10 November entry said had not been done. It does not change the reading.
 - The paired tests are not corrected for there being five per model and view.
+
+## Operating-point check
+
+Written on 11 November 2026, after the segment-based result and before `scripts/operating_points.py` was run in the notebook.
+The matching rule below was set from engine speed, MAP and TPS alone, so how many pairs it matches was already known when this was written.
+What the other columns do at those pairs was not known. The script was run once beforehand to confirm that it writes its file, and those columns were not read.
+
+### Question
+- Were different faults recorded at the same operating points?
+- Where they were, do the other columns differ between the classes by more than they differ within a class?
+
+### Rule
+- A segment's operating point is its mean engine speed, MAP and TPS.
+- The gap between two segments on a column is the difference between their means, divided by the average of their two standard deviations.
+  This is the gap used in `duplication.md`.
+- The operating-point distance between two segments is the largest of their three gaps on engine speed, MAP and TPS.
+- Matched means a distance of at most 1. Loosely matched means a distance of at most 2. Both are reported, and neither was tuned.
+- Low voltage is left out, because its segments repeat lean ones. That leaves 42 segments in three classes, and 861 pairs.
+
+### What gets reported
+- How many pairs of segments from different classes are matched and loosely matched, and which pairs they are.
+- For each segment, whether the nearest segment outside its own fold belongs to its own class.
+  This is what operating point alone would predict for a held-out segment.
+- At the matched and loosely matched pairs, the gap on each of the other eleven columns, for pairs from different classes beside pairs from the same class.
+
+### How it is read
+- A column separates two classes at a shared operating point if its smallest gap between the classes is larger than its largest gap among same-class pairs.
+- The counts are small: 3 matched pairs and 10 matched or loosely matched pairs from different classes, beside 3 and 6 from the same class.
+  So this is a description and not a test, and no *p* value is attached.
+- Two segments at the same operating point can still differ in conditions the file does not record, so a separation is evidence of a fault signature and not proof of one.
+
+### What would change my mind
+- If no column separates the classes at the shared operating points, I report that the file shows no fault signature apart from operating point.
+- If some columns do, I report which ones and for which classes.
+  I do not extend that to operating points where no pair is shared.
