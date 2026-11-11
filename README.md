@@ -34,12 +34,14 @@ Needs pandas, numpy, scipy, scikit-learn and matplotlib. Everything runs in Goog
 | `src/data_io.py` | module | `load()`, `class_runs()`, and `save_result()` / `load_result()` |
 | `src/audit.py` | module | the availability tier for each column, and the restriction ladder |
 | `src/splitting.py` | module | `BlockedSplit`, `check_split`, `purge_width` |
+| `src/segment_map.py` | module | the 56 segments and the fold each one is tested in |
 | `scripts/week1_verify.py` | script | checks the flagged items against the plan |
 | `scripts/label_map.py` | script | confirms which numeric label is which fault |
 | `scripts/folds.py` | script | checks the splitter, measures operating-point drift |
 | `scripts/ladder.py` | script | the restriction ladder, two models, three split designs |
 | `scripts/diagnostics.py` | script | four checks on the port-only rung |
 | `scripts/segments.py` | script | the segments inside each block, and what each one holds |
+| `scripts/segment_ladder.py` | script | the ladder again, with whole segments held out |
 | `scripts/duplication_check.py` | script | compares the low-voltage block with the lean-mixture block |
 | `scripts/report.py` | script | rebuilds every table and figure from the committed results |
 | `colab/startup_cell.py` | cell | mounts Drive, sets up git, clones the repo, fetches the data |
@@ -64,7 +66,8 @@ Run `colab/startup_cell.py` as the first cell of the session, then each script b
 | 4 | `scripts/ladder.py` | `ladder.csv`, `ladder_folds.csv` | step 1 |
 | 5 | `scripts/diagnostics.py` | `port_rung_folds.csv`, `port_confusion.csv`, `port_importance.csv`, `port_subsets.csv`, `matched_separation.csv`, `within_recording_drift.csv` | step 1 |
 | 6 | `scripts/segments.py` | `segment_edges.csv`, `segment_points.csv`, `segment_distance.csv`, `segment_settling.csv`, `segment_lag1.csv` | the CSV |
-| 7 | `scripts/report.py` | every table, and all four figures | steps 1 to 6 |
+| 7 | `scripts/segment_ladder.py` | `segment_ladder.csv`, `segment_ladder_folds.csv` | the CSV |
+| 8 | `scripts/report.py` | every table, and all four figures | steps 1 to 7 |
 
 `scripts/duplication_check.py` is not in that order and nothing depends on it.
 It reads the CSV, prints its own report and writes no files, so it can be run at any time.
@@ -72,7 +75,7 @@ It reads the CSV, prints its own report and writes no files, so it can be run at
 The producing scripts save and check; none of them print a table or draw a figure.
 `report.py` does all of that, from the committed results, and deletes the figures folder first so a leftover file cannot be mistaken for a current one.
 
-Steps 2, 3 and 6 are quick to run. Step 4 is the only slow one, which is why the ladder writes a CSV.
+Steps 2, 3 and 6 are quick to run. Steps 4 and 7 are the slow ones, which is why each writes a CSV.
 Reporting is a separate script so that the figure and the tables can be changed and re-run.
 
 These paths are Colab's. `src/config.py` writes results to `/content/drive/MyDrive/`, so running anywhere else means changing `DRIVE` there first.
@@ -80,8 +83,8 @@ These paths are Colab's. `src/config.py` writes results to `/content/drive/MyDri
 ## Editing it
 
 Scripts in `scripts/` are read fresh every time they run, so editing one takes effect immediately.
-The four modules in `src/` are not.
-Once `config.py`, `data_io.py`, `splitting.py` or `audit.py` has been imported, Python keeps that copy for the rest of the session,
+The five modules in `src/` are not.
+Once `config.py`, `data_io.py`, `splitting.py`, `audit.py` or `segment_map.py` has been imported, Python keeps that copy for the rest of the session,
 and editing the file on disk changes nothing until the runtime is restarted. **Restart the runtime after editing anything in `src/`.**
 
 Each script says what it is working from before it does any work:
@@ -118,14 +121,19 @@ Four properties are asserted before any score is used.
 every rung names a real column, each rung nests inside the one above it, the widest rung is every audited column, and the narrowest rung is exactly the port tier.
 The last one ties the ladder to the availability tiers, so a column cannot be reclassified without the ladder following.
 
-Macro F1 is the primary metric, reported as the range across the five folds and not as a single number.
+A second design holds out whole segments instead of row spans.
+`src/segment_map.py` lists the 56 segments and deals them into 11 folds, keeping each low-voltage segment in the fold of the lean segment it repeats.
+`scripts/segment_ladder.py` runs the same ladder on those folds, with no purge band.
+Its rules and its result are recorded in `protocol.md`.
+
+Macro F1 is the primary metric, reported as the range across the folds and not as a single number.
 Uniform random guessing over these four classes scores 0.249.
 A difference between two rungs is also tested with a paired *t*-test on the five matched folds.
 Five pairs is a small sample, so that test is supporting evidence and not proof.
 
 ## Findings so far
 
-As of 10 November 2026. Each item names the file it comes from.
+As of 11 November 2026. Each item names the file it comes from.
 
 ### The dataset
 
@@ -165,37 +173,65 @@ As of 10 November 2026. Each item names the file it comes from.
 ### The models
 
 **Leakage is worth 0.42 macro F1.**
-At all fourteen columns the random forest scores 0.755 under a shuffled split and 0.334 under the blocked split (`ladder.csv`).
+At all fourteen columns the random forest averages 0.755 under a shuffled split and 0.334 under the blocked split (`ladder.csv`).
 Of that gap, 0.385 comes from breaking the block structure and 0.035 from rows next to the test piece.
 
-**The restriction ladder under the blocked split.**
-Each cell is the range across the five folds, with the pooled score in brackets (`ladder.csv`).
+**The restriction ladder, four classes, under both designs.**
+Each cell is the range across the folds with their mean in brackets: five blocked folds (`ladder.csv`) and eleven segment folds (`segment_ladder.csv`).
+Uniform random guessing scores 0.249.
+
+| rung | columns | random forest, blocked | random forest, segment | logistic regression, blocked | logistic regression, segment |
+| --- | --- | --- | --- | --- | --- |
+| all 14 | 14 | 0.127 to 0.583 (0.334) | 0.100 to 0.446 (0.300) | 0.259 to 0.440 (0.354) | 0.160 to 0.526 (0.347) |
+| no dynamometer | 12 | 0.151 to 0.499 (0.302) | 0.100 to 0.394 (0.318) | 0.237 to 0.475 (0.354) | 0.108 to 0.638 (0.338) |
+| no analyzer gases | 8 | 0.200 to 0.497 (0.294) | 0.053 to 0.372 (0.281) | 0.146 to 0.347 (0.218) | 0.039 to 0.446 (0.192) |
+| no wideband lambda | 6 | 0.160 to 0.437 (0.282) | 0.011 to 0.424 (0.261) | 0.082 to 0.225 (0.176) | 0.000 to 0.417 (0.166) |
+| dedicated PIDs only | 4 | 0.188 to 0.435 (0.321) | 0.009 to 0.589 (0.275) | 0.075 to 0.176 (0.143) | 0.000 to 0.425 (0.132) |
+
+- **The two designs agree.**
+  At every rung the two means are within 0.05 of each other, and they lead to the same reading below.
+  They are two ways of splitting the same file, so this is agreement and not independent confirmation.
+
+- **Random forest: no rung can be told apart from another, in either design.**
+  Every pair of rungs overlaps in its fold range, adjacent or not.
+  All fourteen columns against the four PIDs is a mean drop of +0.013 on the blocked folds (3 of 5 folds, *p* = 0.846) and +0.025 on the segment folds (7 of 11 folds, *p* = 0.616).
+  The closest any single step comes is losing the analyzer gases on the segment folds: +0.038, 9 of 11 folds, *p* = 0.082.
+  So no cost of restriction has been established (`ladder_folds.csv`, `segment_ladder_folds.csv`).
+
+- **Logistic regression falls, mostly when the analyzer gases are removed.**
+  All fourteen columns against the four PIDs is a mean drop of +0.211 on the blocked folds (5 of 5 folds, *p* = 0.005) and +0.215 on the segment folds (9 of 11 folds, *p* = 0.002).
+  The analyzer-gases step alone is +0.136 (5 of 5 folds, *p* = 0.012) and +0.146 (8 of 11 folds, *p* = 0.034).
+  Its three narrowest rungs average below random guessing in both designs.
+  Two cautions: on the segment folds the top and bottom fold ranges overlap, which they did not on the blocked folds, and each model has five such tests with no correction applied.
+
+- **On the segment folds, no rung is established above random guessing by the protocol's range rule.**
+  Every segment fold range in the table covers 0.249, including the one for all fourteen columns, whose mean sits 0.05 (random forest) and 0.10 (logistic regression) above it.
+  "No cost established" has to be read with that in mind: the ladder had little to lose, and the result does not show that the port columns match the laboratory set.
+
+**Three classes, low voltage left out, on the segment folds.**
+Uniform random guessing scores 0.331 here, so these scores are not comparable with the four-class ones directly (`segment_ladder.csv`).
 
 | rung | columns | random forest | logistic regression |
 | --- | --- | --- | --- |
-| all 14 | 14 | 0.127 to 0.583 (0.334) | 0.259 to 0.440 (0.354) |
-| no dynamometer | 12 | 0.151 to 0.499 (0.302) | 0.237 to 0.475 (0.354) |
-| no analyzer gases | 8 | 0.200 to 0.497 (0.294) | 0.146 to 0.347 (0.218) |
-| no wideband lambda | 6 | 0.160 to 0.437 (0.282) | 0.082 to 0.225 (0.176) |
-| dedicated PIDs only | 4 | 0.188 to 0.435 (0.321) | 0.075 to 0.176 (0.143) |
+| all 14 | 14 | 0.224 to 0.694 (0.432) | 0.265 to 0.705 (0.501) |
+| no dynamometer | 12 | 0.165 to 0.555 (0.362) | 0.148 to 0.849 (0.489) |
+| no analyzer gases | 8 | 0.038 to 0.565 (0.359) | 0.052 to 0.673 (0.275) |
+| no wideband lambda | 6 | 0.012 to 0.523 (0.340) | 0.000 to 0.635 (0.249) |
+| dedicated PIDs only | 4 | 0.015 to 0.769 (0.362) | 0.000 to 0.597 (0.199) |
 
-- **Random forest: no rung can be told apart from another.**
-  Every pair of adjacent rungs overlaps in its fold range, and so do the top and bottom rungs.
-  The paired test agrees: all fourteen columns against the four PIDs is a mean difference of +0.013, in favor of the wider set in 3 of 5 folds, *p* = 0.846 (`ladder_folds.csv`).
-  The bottom rung's fold range also covers random guessing.
-  So no cost of restriction has been established, and neither has a fault signal at the port-only rung.
-
-- **Logistic regression falls, and ends below random guessing.**
-  Its top and bottom rungs do not overlap, and the drop is +0.211 in all five folds, *p* = 0.005.
-  The largest single step is losing the analyzer gases: +0.136 in all five folds, *p* = 0.012, although those two fold ranges still overlap.
+- **The reading is the same with the repeated class removed.**
+  Random forest: all fourteen columns against the four PIDs is +0.070, 6 of 11 folds, *p* = 0.151.
+  Logistic regression: +0.301, 9 of 11 folds, *p* = 0.002, with +0.214 of it at the analyzer-gases step (8 of 11 folds, *p* = 0.035).
+  Every fold range again covers guessing.
+  The widest rung's mean sits 0.10 (random forest) and 0.17 (logistic regression) above guessing, against 0.05 and 0.10 with four classes.
 
 - **The lean and low-voltage confusion is the duplication, not a detection limit.**
-  At the port-only rung, 44% of true low voltage is predicted as lean mixture and 24% as itself (`port_confusion.csv`).
+  At the port-only rung on the blocked folds, 44% of true low voltage is predicted as lean mixture and 24% as itself (`port_confusion.csv`).
   The two classes have identical MAP and TPS values and near-identical segment means on every other column, so a model has nothing to separate them on.
   This is a property of the dataset. **It must not be reported as a limit of the OBD-II port.**
 
-- **Two port columns do as much as four.**
-  Engine speed and MAP alone score 0.208 to 0.385 (0.311), road speed and TPS alone 0.221 to 0.404 (0.332), and all four 0.188 to 0.435 (0.321) (`port_subsets.csv`).
+- **Two port columns cannot be told apart from all four.**
+  On the blocked folds, engine speed and MAP alone score 0.208 to 0.385 (0.311), road speed and TPS alone 0.221 to 0.404 (0.332), and all four 0.188 to 0.435 (0.321) (`port_subsets.csv`).
 
 ## Known defects
 
