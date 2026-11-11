@@ -10,6 +10,8 @@ import pandas as pd
 
 RECORDED_SHA256 = "70021a35b2b2efb294e49f4c78b80a391a05414d44d4564c429645eb32260763"
 
+DATA_URL = "https://raw.githubusercontent.com/leoxthomas/EngineFaultDB/main/EngineFaultDB_Final.csv"
+
 # The first path that exists is used
 CSV_PATHS = [
     "EngineFaultDB_Final.csv",
@@ -32,36 +34,35 @@ def class_blocks(labels):
     ends = [start - 1 for start in starts[1:]] + [len(labels) - 1]
     return {int(labels[start]): (start, end) for start, end in zip(starts, ends)}
 
-
 def segment_stats(rows):
     # Mean and SD of every column in each full segment, counted from the first row given
     full = rows.iloc[:len(rows) // SEGMENT * SEGMENT]
     number = np.arange(len(full)) // SEGMENT
     return full.groupby(number).mean(), full.groupby(number).std()
 
-
 def gap(mean_a, sd_a, mean_b, sd_b):
     # Difference in means divided by the average of the two SDs, per column
     return (mean_a - mean_b).abs() / ((sd_a + sd_b) / 2)
 
-
 # LOAD
 found = [path for path in CSV_PATHS if os.path.isfile(path)]
 if not found:
-    raise SystemExit("dataset not found. Looked in:\n   " + "\n   ".join(CSV_PATHS))
+    raise SystemExit(f"dataset not found. Download it from\n   {DATA_URL}\nand save it as one of\n   "
+                     + "\n   ".join(CSV_PATHS))
 path = found[0]
 
 with open(path, "rb") as file:
     sha256 = hashlib.sha256(file.read()).hexdigest()
 
+print(f"\n{os.path.abspath(path)}")
+print(f"{os.path.getsize(path):,} bytes")
+print(f"SHA-256 {sha256}")
+print("matches the recorded checksum" if sha256 == RECORDED_SHA256 else "DIFFERS from the recorded checksum")
+
 data = pd.read_csv(path)
 measurements = [name for name in data.columns if name != "Fault"]
 blocks = class_blocks(data["Fault"].to_numpy())
-
-print(f"\n{os.path.abspath(path)}")
-print(f"{os.path.getsize(path):,} bytes, {len(data):,} rows, {len(data.columns)} columns")
-print(f"SHA-256 {sha256}")
-print("matches the recorded checksum" if sha256 == RECORDED_SHA256 else "DIFFERS from the recorded checksum")
+print(f"{len(data):,} rows, {len(data.columns)} columns")
 
 # 1. Where each class starts and ends
 print("\n1. BLOCK BOUNDARIES")
@@ -103,7 +104,7 @@ print(f"   {'column':<22}{'median':>10}{'worst':>10}")
 for column in other_columns:
     print(f"   {column:<22}{gaps[column].median():>10.4f}{gaps[column].max():>10.4f}")
 
-# 4. Every candidate segment in the file, matched on the fingerprint columns
+# 4. Every candidate segment in the file, matched on the fingerprint columns. SHIFT is not used
 # The grid is taken from both ends of a block, since a block can hold a partial segment
 seen = {}
 for label, (first, last) in blocks.items():
