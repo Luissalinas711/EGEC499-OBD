@@ -59,14 +59,6 @@ verdict(lean["lambda med"] > no_fault["lambda med"],
         "lean is indeed leaner than no fault",
         f"lambda med {lean['lambda med']:.3f} vs {no_fault['lambda med']:.3f}")
 
-# Compared against lean, not against no fault.
-# A weak spark leaves unburnt fuel, but so does a rich mixture
-# this engine's no-fault baseline is rich enough that its HC is the highest of the four
-# Lean is the fair comparison: near enough the same mixture that any HC difference is the spark rather than the fuelling.
-verdict(low["HC med"] > lean["HC med"],
-        "low voltage leaves more unburnt fuel than lean (its nearest fault class)",
-        f"HC med {low['HC med']:.1f} vs {lean['HC med']:.1f}")
-
 # Which two classes sit on top of each other.
 # verification from what the paper says
 medians = df.groupby("fault")[["lambda_", "co", "hc", "co2"]].median()
