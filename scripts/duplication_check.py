@@ -69,7 +69,7 @@ print("\n1. BLOCK BOUNDARIES")
 for label, (first, last) in blocks.items():
     rows = last - first + 1
     print(f"   label {label}  {NAMES[label]:<13} rows {first:>6,} to {last:>6,}"
-          f"   {rows:>6,} rows   {rows // SEGMENT} full segments")
+          f"   {rows:>6,} rows   {rows // SEGMENT} whole {SEGMENT}-row windows")
 
 # 2. The two row ranges, column by column
 lean_first, lean_last = blocks[LEAN]
