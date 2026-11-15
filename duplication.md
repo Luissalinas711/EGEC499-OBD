@@ -15,7 +15,7 @@ The sections below are numbered to match the output of `scripts/duplication_chec
 
 The label column changes three times, so each class is one unbroken run of rows. Row numbers count from 0.
 
-| Label | Class | Rows | Count | Full 1000-row segments |
+| Label | Class | Rows | Count | Whole 1000-row windows |
 |---|---|---|---|---|
 | 0 | no fault | 0 – 15,999 | 16,000 | 16 |
 | 1 | rich mixture | 16,000 – 26,997 | 10,998 | 10 |
@@ -64,8 +64,9 @@ No other candidate repeats.
 
 ## 5. The same gap between every pair of classes
 
-For scale, the same gap was computed between classes.
-For each segment it is the largest gap across the fourteen columns to the nearest segment of the other class.
+For scale, the same gap was computed between classes, on the 1000-row windows of section 1.
+For each window it is the largest gap across the fourteen columns to the nearest window of the other class.
+In the rich block the windows run one or two rows past the segment boundaries, which makes its gaps smaller, not larger.
 
 | Pair | Median | Closest |
 |---|---|---|
@@ -81,4 +82,3 @@ For each segment it is the largest gap across the fourteen columns to the neares
 Put the CSV in the folder the script is run from, or in `data/raw/` below it, and run `scripts/duplication_check.py`.
 The script needs only pandas and numpy and imports nothing else from this repository.
 It compares the file's SHA-256 with the value above, finds the block boundaries from the label column, and prints the figures in sections 1 to 5.
-Run on 10 November 2026: its output matched this note.
