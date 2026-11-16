@@ -1,11 +1,9 @@
 # Duplication in EngineFaultDB
 
-**Luis Salinas · EGEC 499 · 10 November 2026**
-
 In EngineFaultDB, the low-voltage block repeats the lean-mixture block: its MAP and TPS columns are identical to lean's across 14,000 rows, and its other twelve columns match lean's segment by segment.
-This note records what the file contains and how to check it.
+This note records what the file contains and how to check it, and does not interpret the cause.
 
-**The file.** `EngineFaultDB_Final.csv`, 5,334,236 bytes, 55,999 rows, 15 columns, downloaded from `raw.githubusercontent.com/leoxthomas/EngineFaultDB`.
+**The file:** `EngineFaultDB_Final.csv`, 5,334,236 bytes, 55,999 rows, 15 columns, downloaded from `raw.githubusercontent.com/leoxthomas/EngineFaultDB`.
 SHA-256 `70021a35b2b2efb294e49f4c78b80a391a05414d44d4564c429645eb32260763`.
 Sections 1 to 5 are numbered to match the output of `scripts/duplication_check.py`.
 
@@ -22,7 +20,7 @@ Each class is one unbroken run of rows, numbered from 0.
 
 ## 2. Row-by-row comparison
 
-Low-voltage rows **41,998 – 55,997** were compared with lean-mixture rows **27,998 – 41,997**, so row *n* of the low-voltage block is compared with row *n* + 1000 of the lean block.
+Low-voltage rows 41,998 – 55,997 were compared with lean-mixture rows 27,998 – 41,997, so row *n* of the low-voltage block is compared with row *n* + 1000 of the lean block.
 **MAP and TPS are identical in all 14,000 rows**: the largest difference is zero in both, and `numpy.array_equal` returns `True` for each.
 The other twelve columns are not identical row by row, with largest differences from 0.109 (O2) to 429.322 (RPM).
 
@@ -65,10 +63,9 @@ In the rich block the windows run one or two rows past the segment boundaries, w
 | no fault / low voltage | 37.14 | 8.49 |
 | rich mixture / lean mixture | 15.34 | 7.81 |
 | rich mixture / low voltage | 15.51 | 7.90 |
-| **lean mixture / low voltage** | **0.09** | **0.04** |
+| lean mixture / low voltage | 0.09 | 0.04 |
 
 ## How to check
 
 Put the CSV in the folder the script is run from, or in `data/raw/` below it, and run `scripts/duplication_check.py`, which needs only pandas and numpy and nothing else from this repository.
 It compares the file's SHA-256 with the value above, finds the block boundaries from the label column, and prints the figures in sections 1 to 5.
-Run on 10 November 2026: its output matched this note.
